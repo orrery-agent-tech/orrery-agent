@@ -1,12 +1,15 @@
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
 import { injected } from "wagmi/connectors";
-import { activeChain, RPC_URLS } from "./config";
+import { activeChain, RPC_FALLBACK_URL, RPC_URLS } from "./config";
 
 /**
  * Reads go to the first endpoint that answers: a rate limit, a refused batch or an outage on one moves the request to
- * the next. Batches stay at 50 (blockmachine refuses more than 100); dRPC's free plan takes 3, so it gets none.
+ * the next, and the keyed endpoint, when set, comes last. Batches stay at 50 (blockmachine refuses more than 100);
+ * dRPC's free plan takes 3, so it gets none.
  */
-const endpoints = RPC_URLS.map((url) => http(url, /drpc\.org/.test(url) ? {} : { batch: { wait: 16, batchSize: 50 } }));
+const endpoints = [...RPC_URLS, ...(RPC_FALLBACK_URL ? [RPC_FALLBACK_URL] : [])].map((url) =>
+  http(url, /drpc\.org/.test(url) ? {} : { batch: { wait: 16, batchSize: 50 } }),
+);
 
 /**
  * Any injected wallet, never one brand: wagmi turns every EIP-6963 announcement into its own connector with the

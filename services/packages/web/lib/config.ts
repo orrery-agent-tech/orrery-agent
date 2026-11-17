@@ -17,6 +17,11 @@ const DEFAULT_RPC_URLS = ["https://robinhood-rpc.publicnode.com", "https://rpc-r
 export const RPC_URLS = (env(process.env.NEXT_PUBLIC_RPC_URL)?.split(",").map((u) => u.trim()).filter(Boolean)) ?? DEFAULT_RPC_URLS;
 export const RPC_URL = RPC_URLS[0]!;
 /**
+ * A keyed endpoint tried only after every public one has failed. It is set in the host's environment, never in the
+ * repository, and never handed to a wallet as the chain's RPC.
+ */
+export const RPC_FALLBACK_URL = env(process.env.NEXT_PUBLIC_RPC_FALLBACK_URL);
+/**
  * The RPC written into an agent's key file. The page only reads through RPC_URL (the wallet publishes its own
  * transactions), but an agent sends its top-ups itself, and the default read endpoint on 4663 does not publish
  * transactions. Elsewhere the page's own RPC is the right one (a local chain, the development network).
