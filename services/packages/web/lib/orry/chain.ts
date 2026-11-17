@@ -2,7 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { BaseError, ContractFunctionRevertedError, type Abi, type Address, type Hex } from "viem";
+import { BaseError, ContractFunctionRevertedError, HttpRequestError, RpcRequestError, TimeoutError, WaitForTransactionReceiptTimeoutError, type Abi, type Address, type Hex, type PublicClient, type TransactionReceipt } from "viem";
 import { useBalance, useConnection, usePublicClient, useReadContract, useReadContracts, useWriteContract } from "wagmi";
 import { iEarnVaultAbi, iEarnVaultFactoryAbi, iOrryRewardsRouterAbi, iOrryStakingAbi, iOrryTokenAbi } from "@orrery/shared";
 import { activeChain } from "../config";
@@ -152,6 +152,7 @@ export function explain(e: unknown, fallback: string): string {
     }
     if (/reject|denied/i.test(e.shortMessage + e.message)) return "The wallet request was dismissed.";
     if (/insufficient funds/i.test(e.message)) return "The ETH balance does not cover the amount plus gas.";
+    if (e.walk((x) => x instanceof RpcRequestError || x instanceof HttpRequestError || x instanceof TimeoutError)) return `${fallback} The network did not answer in time. Send it again in a few seconds.`;
     return `${fallback} ${e.shortMessage}`.trim();
   }
   const msg = e instanceof Error ? e.message : "";
@@ -160,6 +161,22 @@ export function explain(e: unknown, fallback: string): string {
 }
 
 export type Notice = { tone: "ok" | "error" | ""; text: string } | null;
+
+/**
+ * The receipt of a transaction the wallet has already published. A read that fails on the way (a rate limit, an
+ * endpoint that has not seen the block yet) is retried: the transaction is on its way either way, so only a long silence
+ * ends the wait.
+ */
+export async function receiptOf(pub: PublicClient, hash: Hex): Promise<TransactionReceipt> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await pub.waitForTransactionReceipt({ hash, timeout: 120_000 });
+    } catch (e) {
+      if (attempt >= 4 || e instanceof WaitForTransactionReceiptTimeoutError) throw e;
+      await new Promise((r) => setTimeout(r, 1500 * (attempt + 1)));
+    }
+  }
+}
 
 interface Call {
   address: Address;
@@ -181,14 +198,16 @@ export function useTx() {
   const [busy, setBusy] = useState<string | null>(null);
   const [notice, setNotice] = useState<Notice>(null);
 
-  async function send(c: Call): Promise<Hex> {
+  /** `onSent` hears the hash as soon as the wallet publishes, before the receipt: the caller knows it went out. */
+  async function send(c: Call, onSent?: (hash: Hex) => void): Promise<Hex> {
     if (!pub) throw new Error("The network is out of reach. Check the connection and send again.");
     // Simulating first surfaces the contract's own error before the wallet opens.
     await pub.simulateContract({ ...c, account } as never).catch((e) => {
       if (e instanceof BaseError && e.walk((x) => x instanceof ContractFunctionRevertedError)) throw e;
     });
     const hash = await writeContractAsync(c as never);
-    const r = await pub.waitForTransactionReceipt({ hash });
+    onSent?.(hash);
+    const r = await receiptOf(pub as PublicClient, hash);
     if (r.status !== "success") throw new Error("The transaction was reverted on chain.");
     return hash;
   }

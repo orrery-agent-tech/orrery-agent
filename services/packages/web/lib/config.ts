@@ -7,7 +7,15 @@ import { defineChain, type Address } from "viem";
 const env = (v: string | undefined) => (v && v.length > 0 ? v : undefined);
 
 export const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? 4663);
-export const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL ?? "https://rpc-robinhood.blockmachine.io";
+/**
+ * The page's read endpoints, tried in order (`NEXT_PUBLIC_RPC_URL` takes a comma list). On 4663 the free endpoints each
+ * cap something: blockmachine allows 60 compute units a minute per IP (code -32029) and publishes no transactions, and
+ * dRPC's free plan takes at most 3 requests per batch. publicnode leads because it has neither cap, and it is also the
+ * endpoint a wallet receives when the page adds the chain.
+ */
+const DEFAULT_RPC_URLS = ["https://robinhood-rpc.publicnode.com", "https://rpc-robinhood.blockmachine.io", "https://robinhood.drpc.org"];
+export const RPC_URLS = (env(process.env.NEXT_PUBLIC_RPC_URL)?.split(",").map((u) => u.trim()).filter(Boolean)) ?? DEFAULT_RPC_URLS;
+export const RPC_URL = RPC_URLS[0]!;
 /**
  * The RPC written into an agent's key file. The page only reads through RPC_URL (the wallet publishes its own
  * transactions), but an agent sends its top-ups itself, and the default read endpoint on 4663 does not publish
