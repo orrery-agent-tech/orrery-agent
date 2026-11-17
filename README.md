@@ -29,10 +29,21 @@ Every contract above has verified source on Blockscout.
 | `services/packages/mcp` | MCP server |
 | `services/packages/shared` | Types and constants shared by the packages |
 
-## Build and test
+## Use it
+
+Agents and merchants integrate through the published packages:
 
 ```bash
-cd contracts && forge build && forge test --no-match-path '*/fork/*'
-cd services && pnpm install && pnpm test
-cd services/packages/web && pnpm build
+npm install @orrery-tech/sdk
 ```
+
+```ts
+import { agentFromEnv, checkPayment } from "@orrery-tech/sdk";
+```
+
+AI assistants that speak MCP add the server with `npx -y @orrery-tech/mcp`. Each package's README covers its setup:
+[`services/packages/sdk`](services/packages/sdk) and [`services/packages/mcp`](services/packages/mcp).
+
+## License
+
+MIT, see [LICENSE](LICENSE).
