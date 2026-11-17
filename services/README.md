@@ -29,7 +29,7 @@ TypeScript (Node 22+, pnpm) packages behind https://orreryagent.com and https://
 | `ORRERY_RELAYER_KEY[_FILE]`, `ORRERY_CHECK_SIGNER_KEY[_FILE]`, `ORRERY_ATTESTER_KEY[_FILE]` | anvil keys on 31337 only | Required on any other chain: a key file (JSON `{ "privateKey": ... }` or raw hex) |
 | `ORRERY_IPFS_GATEWAY` | `https://ipfs.io/ipfs/` | |
 | `ORRERY_PROBE_FRESH_SECONDS` | `600` | A paid check reprobes when the cached probe is older |
-| `ORRERY_PUBLIC_RATE_PER_MINUTE` | `60` | Public read endpoints, per IP |
+| `ORRERY_PUBLIC_RATE_PER_MINUTE` | `300` | Public read endpoints, per IP, one bucket shared by all of them |
 | `ORRERY_TRUST_PROXY` | `loopback,linklocal,uniquelocal` | Peers allowed to set X-Forwarded-For; a public peer is never trusted. `off` disables |
 | `ORRERY_CORS_ORIGINS` | the local web origins | Comma list of web origins the API answers |
 | `ORRERY_INDEXER_START_BLOCK`, `ORRERY_INDEXER_MAX_LAG`, `ORRERY_INDEXER_HEALTH_PORT` | `0`, `600`, `8788` | Health is lag against the chain head |

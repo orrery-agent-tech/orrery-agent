@@ -377,7 +377,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     probeAllowPrivate: env.ORRERY_PROBE_ALLOW_PRIVATE === "1" && chainId === 31337,
     trustProxy: trustProxyFrom(env.ORRERY_TRUST_PROXY),
     probeFreshSeconds: Number(env.ORRERY_PROBE_FRESH_SECONDS ?? 600),
-    publicRatePerMinute: Number(env.ORRERY_PUBLIC_RATE_PER_MINUTE ?? 60),
+    publicRatePerMinute: Number(env.ORRERY_PUBLIC_RATE_PER_MINUTE ?? 300),
     corsOrigins: (env.ORRERY_CORS_ORIGINS ?? "http://localhost:3100,http://127.0.0.1:3100").split(",").map((o) => o.trim()).filter(Boolean),
     orry,
     orryFeatures,
