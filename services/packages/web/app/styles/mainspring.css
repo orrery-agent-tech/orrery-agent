@@ -1,0 +1,190 @@
+/* Orrery theme: "Mainspring". Loaded last (app/globals.css), so it sets the tokens every earlier layer reads.
+   Midnight navy with a guilloché engraving, silver ink, rose gold for the one primary action and headline line two.
+   Display Instrument Serif (light, line two italic), text Hanken Grotesk, figures IBM Plex Mono. The hero object is a
+   photographed plate (public/art/orrery-plate.webp, design/mainspring/README.md); the eyepiece illustrations
+   (public/art/*.webp, design/art/hd_art.py) are complete views, so no layer may mask or crop them. */
+:root {
+  --night: #0f1a2e;
+  --night-deep: #0a1222;
+  --night-glow: #18294a;
+  --rose: #d9967a;
+  --rose-soft: #ebc2ae;
+  --rose-ink: #9a5b42;
+  --silver: #e9ecef;
+  --ruby: #c2384b;
+
+  --ground-light: #eceef1;
+  --paper: #f6f7f8;
+  --ground-dark: var(--night);
+  --ground-deep: var(--night-deep);
+  --ink: #0f1a2e;
+  --muted: #586377;
+  --brand: var(--rose);
+  --brand-deep: #c4805f;
+  --brand-soft: #f6e4db;
+  --brand-on: var(--night);
+  --success: #23806a;
+  --warning: #a66a12;
+  --danger: #c23c4b;
+  --hairline: #cfd4db;
+  --line-dark: rgba(233, 236, 239, 0.16);
+
+  --display: var(--font-display), "Instrument Serif", serif;
+  --text: var(--font-text), "Hanken Grotesk", sans-serif;
+  --mono: var(--font-mono), "IBM Plex Mono", monospace;
+  --radius-card: 14px;
+  --shadow-soft: 0 1px 2px rgba(15, 26, 46, 0.06), 0 16px 36px -20px rgba(15, 26, 46, 0.3);
+  --shadow-float: 0 2px 6px rgba(15, 26, 46, 0.1), 0 30px 70px -28px rgba(10, 18, 34, 0.55);
+  /* Guilloché: two engraved wave rows per tile, faint silver on navy. */
+  --engrave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='28'%3E%3Cg fill='none' stroke='%23e9ecef' stroke-opacity='.045' stroke-width='1'%3E%3Cpath d='M0 7c22.5-9 22.5 9 45 0s22.5-9 45 0 22.5 9 45 0 22.5-9 45 0'/%3E%3Cpath d='M0 21c22.5 9 22.5-9 45 0s22.5 9 45 0 22.5-9 45 0 22.5 9 45 0'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+body { font-family: var(--text); background: var(--ground-light); color: var(--ink); }
+h1, h2, h3, .console-head, .lp-faq-list summary { font-family: var(--display); }
+h1 { font-weight: 400; letter-spacing: -0.02em; }
+h2 { font-weight: 400; letter-spacing: -0.015em; line-height: 1.04; }
+h3 { font-weight: 400; letter-spacing: -0.005em; font-size: 1.45rem; }
+.kicker, .section-kicker { color: var(--rose-ink); font-weight: 600; letter-spacing: 0.01em; }
+.lp-dark .kicker { color: var(--rose-soft); }
+.guide-for span, .lp-who-tag, .preview-title { text-transform: none; letter-spacing: 0.01em; font-size: 0.86rem; }
+.lp-who-tag, .guide-for span { color: var(--rose-ink); }
+.preview-title { color: var(--rose-soft); }
+
+/* Header: a full-width bar flush with the top, one silver hairline under it, the same on every page. */
+.nav,
+.product-page .nav {
+  width: 100%; max-width: none; margin: 0; min-height: 76px; gap: 28px;
+  padding: 0 max(24px, calc((100% - 1240px) / 2));
+  border: 0; border-bottom: 1px solid var(--line-dark); border-radius: 0; box-shadow: none;
+  background: var(--night); color: var(--silver);
+}
+.nav.is-scrolled { background: rgba(15, 26, 46, 0.92); box-shadow: 0 12px 30px -24px rgba(0, 0, 0, 0.8); backdrop-filter: blur(12px); }
+.js-motion .nav, .nav { position: sticky; top: 0; z-index: 40; }
+.brand { display: inline-flex; align-items: center; gap: 14px; color: var(--silver); font-family: var(--display); font-weight: 400; font-size: 1.3rem; letter-spacing: 0.32em; text-transform: uppercase; white-space: nowrap; }
+.brand .brand-mark { width: 34px; height: 34px; flex: none; }
+.nav-menu { margin-left: auto; margin-right: auto; }
+.nav-links a, .nav-more { color: rgba(233, 236, 239, 0.75); font-weight: 500; font-size: 0.92rem; }
+.nav-links a:hover, .nav-links a[aria-current="page"], .nav-more:hover, .nav-more[aria-expanded="true"], .nav-more[aria-current="page"] { color: #fff; }
+.nav-links a[aria-current="page"], .nav-more[aria-current="page"] { box-shadow: inset 0 -1.5px 0 var(--rose); padding-bottom: 6px; }
+.nav-links a:focus-visible, .nav-more:focus-visible, .nav-panel a:focus-visible { outline-color: var(--rose); }
+.nav-actions { gap: 18px; }
+.nav .x-link, .nav-actions a { color: var(--silver); }
+.nav-divider { width: 1px; height: 28px; background: var(--line-dark); flex: none; }
+.nav .wallet { background: transparent; color: var(--silver); border: 1px solid rgba(233, 236, 239, 0.55); border-radius: 8px; font-weight: 500; padding: 10px 18px; min-height: 42px; }
+.nav .wallet:hover { background: rgba(233, 236, 239, 0.08); border-color: var(--silver); }
+.nav .wallet.warn { border-color: var(--rose); color: var(--rose-soft); }
+.nav-panel { background: var(--night); color: var(--silver); border: 1px solid var(--line-dark); border-radius: 12px; }
+.nav-group p { border-bottom-color: var(--line-dark); color: var(--rose-soft); }
+.nav-group a { color: rgba(233, 236, 239, 0.7); }
+.nav-group a:hover, .nav-group a[aria-current="page"] { color: #fff; }
+@media (max-width: 1080px) {
+  .nav, .product-page .nav { padding: 10px 16px; min-height: 64px; }
+  .nav-menu { margin-right: 0; border-top-color: var(--line-dark); }
+  .brand { font-size: 1.1rem; letter-spacing: 0.26em; }
+  .brand .brand-mark { width: 28px; height: 28px; }
+}
+@media (max-width: 420px) {
+  .brand { font-size: 1rem; letter-spacing: 0.2em; gap: 10px; }
+  .nav-divider { display: none; }
+}
+
+/* Buttons */
+.btn, .primary, .secondary { border-radius: 8px; }
+.btn-brand, .primary { background: var(--rose); border-color: var(--rose); color: var(--night); box-shadow: 0 10px 26px -14px rgba(217, 150, 122, 0.7); }
+.btn-brand:hover, .primary:hover { background: var(--rose-soft); border-color: var(--rose-soft); box-shadow: 0 12px 30px -14px rgba(217, 150, 122, 0.8); }
+.lp-dark .btn-brand, .lp-dark .primary, .lp-hero .btn-brand { background: var(--rose); border-color: var(--rose); color: var(--night); }
+
+/* Hero: the plate on the engraved navy ground. */
+.lp-hero-wrap { background: var(--engrave), var(--night); color: var(--silver); }
+.lp-hero { padding: 72px 0 104px; }
+.lp-hero h1 { color: var(--silver); font-weight: 400; font-size: clamp(3rem, 5.6vw, 5.6rem); line-height: 1; letter-spacing: -0.02em; margin-top: 0; }
+.lp-hero h1 .accent { color: var(--rose); font-style: italic; }
+.lp-lead { color: rgba(233, 236, 239, 0.84); }
+.lp-hero .btn-ghost { color: var(--silver); border-color: rgba(233, 236, 239, 0.5); }
+.lp-hero .btn-ghost:hover { background: rgba(233, 236, 239, 0.08); border-color: var(--silver); }
+.lp-hero .lp-ca, .lp-hero .lp-trade { background: rgba(233, 236, 239, 0.05); border-color: rgba(233, 236, 239, 0.18); color: rgba(233, 236, 239, 0.78); }
+.lp-hero .lp-ca-label, .lp-hero .lp-ca-addr, .lp-hero .lp-trade { color: #fff; }
+.lp-hero-plate { position: absolute; inset: -24px -8% auto -2%; width: 110%; max-width: none; height: auto; display: block; pointer-events: none; -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%); }
+
+/* The reading card: smoked glass over the plate. */
+.console { background: rgba(15, 26, 46, 0.72); color: var(--silver); border: 1px solid rgba(233, 236, 239, 0.18); border-radius: 14px; backdrop-filter: blur(14px) saturate(1.1); box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.8); }
+.console-head { font-weight: 400; font-size: 1.2rem; }
+.console-head > span:first-child { color: #fff; }
+.console-source { color: var(--rose-soft); }
+.console-form input { background: rgba(10, 18, 34, 0.6); border-color: rgba(233, 236, 239, 0.18); color: var(--silver); border-radius: 8px; }
+.console-form input::placeholder { color: rgba(233, 236, 239, 0.45); }
+.console-form input:focus { background: rgba(10, 18, 34, 0.85); outline-color: rgba(217, 150, 122, 0.6); }
+.console-form button { background: var(--rose); color: var(--night); border-radius: 8px; }
+.console-form button:disabled { background: rgba(217, 150, 122, 0.35); color: rgba(15, 26, 46, 0.7); }
+.console-state { background: rgba(233, 236, 239, 0.06); border-radius: 8px; }
+.console-state i { background: rgba(233, 236, 239, 0.4); }
+.console-state.is-active { background: rgba(35, 128, 106, 0.18); }
+.console-state span, .console-grid small, .console-grid em { color: rgba(233, 236, 239, 0.62); }
+.console-track { background: rgba(233, 236, 239, 0.12); }
+.console-track i { background: var(--rose); }
+.console-foot { border-top-color: rgba(233, 236, 239, 0.14); color: rgba(233, 236, 239, 0.62); }
+.console-foot a { color: var(--rose-soft); }
+.console.is-idle .console-grid::after { background: linear-gradient(100deg, transparent 20%, rgba(217, 150, 122, 0.06) 45%, rgba(233, 236, 239, 0.12) 50%, rgba(217, 150, 122, 0.06) 55%, transparent 80%); }
+
+/* Facts strip: a rose gold band with navy type. */
+.lp-marquee { background: linear-gradient(180deg, #e2a68b, var(--rose) 45%, #c98467); color: var(--night); border: 0; -webkit-mask-image: none; mask-image: none; }
+.lp-marquee-track span { font-family: var(--text); font-weight: 500; font-size: 0.98rem; letter-spacing: 0.01em; }
+.lp-marquee-track span::after { width: 4px; height: 4px; margin-top: -2px; right: -2px; background: var(--night); border-radius: 50%; }
+
+/* Sections */
+.lp-dark { background: var(--engrave), radial-gradient(ellipse 70% 60% at 85% 0%, var(--night-glow), transparent 70%), var(--night); color: var(--silver); }
+.lp-paper { background: var(--paper); }
+.lp-ground { background: var(--ground-light); }
+.lp-link { color: var(--rose-ink); border-bottom-width: 1px; }
+.lp-dark .lp-link { color: var(--rose-soft); }
+.lp-dark .btn-ghost { color: var(--silver); border-color: rgba(233, 236, 239, 0.4); }
+.lp-head h2, .lp-split h2 { font-weight: 400; font-size: clamp(2.3rem, 4vw, 3.6rem); }
+
+/* Illustrations are complete eyepiece views: never mask or crop them. */
+.lp-steps img, .page-head-art, .lp-operator-stage > img, .rc-head-art { -webkit-mask-image: none !important; mask-image: none !important; }
+.lp-steps img { width: 78%; margin: 0 auto 18px; object-fit: contain; }
+.lp-steps::before { top: 19%; background: repeating-linear-gradient(90deg, rgba(217, 150, 122, 0.6) 0 2px, transparent 2px 12px); background-size: 12px 2px; }
+.lp-steps p { color: rgba(233, 236, 239, 0.74); }
+.lp-job-art { background: transparent; border-radius: 22px; }
+.lp-job-art img { object-fit: contain; }
+.lp-who-art { width: 112px; height: 112px; }
+.page-head-art { width: clamp(180px, 20vw, 260px); }
+.lp-credits > img, .lp-credits-art img { background: transparent; }
+.lp-operator-art img, .lp-credits-art img { width: min(420px, 100%); margin: 0 auto; }
+
+/* Code and panels */
+.lp-code, .docs-main pre { background: var(--night-deep); color: var(--silver); border-color: var(--line-dark); }
+.lp-code .cc { color: var(--rose); }
+.panel, .editor, .signer-overview, .signer-caps { border-color: rgba(15, 26, 46, 0.08); }
+.preview { background: var(--engrave), var(--night); }
+.preview-foot a { color: var(--rose-soft); }
+.lp-editor { border: 1px solid rgba(217, 150, 122, 0.45); }
+.lp-editor-fields div:last-child { background: var(--brand-soft); }
+.lp-faq-list summary { font-weight: 400; font-size: 1.3rem; }
+.lp-faq-list summary::after { color: var(--rose-ink); }
+.guide-n { color: var(--night); background: var(--rose-soft); }
+.console-foot a, .lp-link, .text-link { text-underline-offset: 4px; }
+
+footer.site-footer { background: var(--engrave), var(--night-deep); border-top: 1px solid var(--line-dark); color: var(--silver); }
+.site-footer-links a:hover { color: var(--rose-soft); }
+
+:focus-visible { outline-color: var(--rose-ink); }
+.lp-dark :focus-visible, .lp-hero-wrap :focus-visible, .nav :focus-visible { outline-color: var(--rose); }
+
+@media (max-width: 1080px) {
+  .lp-hero { padding: 48px 0 72px; }
+  .lp-hero-stage { padding-top: 70%; }
+  .lp-hero-plate { inset: -6% -10% auto -10%; width: 120%; }
+}
+@media (max-width: 760px) {
+  .lp-hero h1 { font-size: clamp(2.6rem, 11.5vw, 3.6rem); }
+  .lp-steps img { width: 70%; }
+}
+@media (min-width: 1081px) {
+  .lp-hero-stage .console { left: auto; right: -4%; bottom: -96px; }
+}
+
+/* Dashboard shell brand, matching the site header. */
+.dsh-brand { font-weight: 400; font-size: 1.05rem; letter-spacing: 0.3em; text-transform: uppercase; }
+.dsh-brand .brand-mark { width: 28px; height: 28px; flex: none; }
+.lp-hero h1 .rl { display: block; padding-bottom: 0.16em; margin-bottom: -0.12em; }

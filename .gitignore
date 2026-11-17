@@ -1,0 +1,36 @@
+node_modules/
+.env
+.env.*
+!.env.example
+out/
+cache/
+broadcast/
+*.key
+design/*.log
+deployments/*-fork.json
+contracts/lib/v4-periphery
+
+# Kept on the maintainers' machines only, never published: operations, deployment records, planning and design.
+/ops/
+/docs/
+/design/
+/deployments/
+/00-source/
+/0*-*.md
+/1*-*.md
+/PROGRESS.md
+/contracts/mutate*.py
+/contracts/mutate*.out
+# Mainnet operations scripts (deploy, funding, hosting, posting) and the live walks
+/services/scripts/*-4663.ts
+/services/scripts/*-46630*.ts
+/services/scripts/go-live-4663.ts
+/services/scripts/host-vps.ts
+/services/scripts/keys.ts
+/services/scripts/fork-pons-launch.ts
+/services/scripts/operator-setup-fork.ts
+/services/scripts/setup-safe-fork.ts
+/services/scripts/wallet-proxy.ts
+/services/scripts/x-*.ts
+/services/scripts/walk/
+

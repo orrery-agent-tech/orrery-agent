@@ -1,0 +1,48 @@
+[profile.default]
+src = "src"
+test = "test"
+out = "out"
+libs = ["lib"]
+remappings = [
+  "forge-std/=lib/forge-std/src/",
+  "@uniswap/v4-core/=lib/v4-periphery/lib/v4-core/",
+  "v4-core/=lib/v4-periphery/lib/v4-core/",
+  "v4-periphery/=lib/v4-periphery/",
+  "permit2/=lib/v4-periphery/lib/permit2/",
+  "solmate/=lib/v4-periphery/lib/v4-core/lib/solmate/",
+  "@openzeppelin/contracts/=lib/v4-periphery/lib/v4-core/lib/openzeppelin-contracts/contracts/",
+]
+# lib/v4-periphery is a local symlink to Uniswap v4-periphery at c6e4754d (with v4-core, permit2, solmate, openzeppelin nested); not committed
+# The compiler the mainnet contracts were built and verified with.
+solc = "0.8.38"
+evm_version = "cancun"
+via_ir = true
+optimizer = true
+optimizer_runs = 200
+ignored_error_codes = [6335]
+# the deterministic deep run needs far more than the default test gas
+gas_limit = 9223372036854775807
+# Lane L3: the generated UltraHonk verifier of OrreryShield (Barretenberg output) compiles only with the legacy pipeline
+# (via-IR stops on "too deep in the stack"), and OrreryShield itself fits the 24,576-byte limit only with it (via-IR
+# inlines the Poseidon2 Yul at every call: 48,413 bytes against 19,409). Both, and the files that import them, build with
+# this profile.
+additional_compiler_profiles = [{ name = "legacy", via_ir = false }]
+compilation_restrictions = [
+  { paths = "src/markets/r2/shield/verifier/HonkVerifier.sol", via_ir = false },
+  { paths = "src/markets/r2/shield/OrreryShield.sol", via_ir = false },
+]
+
+[fuzz]
+runs = 256
+
+[invariant]
+runs = 256
+depth = 120
+fail_on_revert = false
+show_metrics = true
+
+[rpc_endpoints]
+robinhood = "https://rpc-robinhood.blockmachine.io"
+
+[lint]
+lint_on_build = false

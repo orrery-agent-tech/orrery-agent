@@ -1,0 +1,24 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "tech.orrery/orrery",
+  "title": "Orrery",
+  "description": "Signed readings of paying agents, public policy entries, signed onchain datasets and x402 payments inside set caps, on Robinhood Chain.",
+  "version": "0.1.0",
+  "websiteUrl": "https://orreryagent.com",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@orrery/mcp",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        { "name": "ORRERY_API_KEY", "description": "Your Orrery API key, used by checks, credits and dataset reads", "isRequired": false, "isSecret": true },
+        { "name": "ORRERY_API_KEY_FILE", "description": "Path that receives the key issued with a data pack purchase (mode 600)", "isRequired": false, "format": "filepath" },
+        { "name": "ORRERY_AGENT_KEY_FILE", "description": "Key file of your agent's session signer (mode 600), used to pay from its float", "isRequired": false, "isSecret": true, "format": "filepath" },
+        { "name": "ORRERY_MCP_MAX_PAYMENT_USD", "description": "USD amount above which a payment requires confirm: true", "isRequired": false, "default": "1" },
+        { "name": "ORRERY_API_URL", "description": "Orrery API base URL", "isRequired": false, "default": "https://api.orreryagent.com" },
+        { "name": "ORRERY_RPC_URL", "description": "Robinhood Chain RPC endpoint", "isRequired": false, "default": "https://rpc.mainnet.chain.robinhood.com" }
+      ]
+    }
+  ]
+}

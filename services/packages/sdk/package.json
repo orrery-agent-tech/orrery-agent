@@ -1,0 +1,19 @@
+{
+  "name": "@orrery/sdk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "pack:npm": "node scripts/pack.mjs"
+  },
+  "dependencies": {
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@orrery/shared": "workspace:*",
+    "tsup": "8.5.1"
+  }
+}

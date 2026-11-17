@@ -1,0 +1,7 @@
+packages:
+  - packages/*
+allowBuilds:
+  esbuild: true
+  # lane L3: an optional native speed-up of msgpackr (pulled in by @aztec/bb.js); its install script is declined, msgpackr
+  # falls back to plain JavaScript
+  msgpackr-extract: false

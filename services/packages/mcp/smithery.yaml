@@ -1,0 +1,26 @@
+# Smithery listing for @orrery/mcp (prepared, not published).
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      apiKey:
+        type: string
+        description: Your Orrery API key, used by checks, credits and dataset reads
+      agentKeyFile:
+        type: string
+        description: Key file of your agent's session signer (mode 600), used to pay from its float
+      maxPaymentUsd:
+        type: number
+        default: 1
+        description: USD amount above which a payment requires confirm true
+  commandFunction: |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', '@orrery/mcp'],
+      env: {
+        ...(config.apiKey ? { ORRERY_API_KEY: config.apiKey } : {}),
+        ...(config.agentKeyFile ? { ORRERY_AGENT_KEY_FILE: config.agentKeyFile } : {}),
+        ORRERY_MCP_MAX_PAYMENT_USD: String(config.maxPaymentUsd ?? 1)
+      }
+    })

@@ -1,0 +1,221 @@
+/* Orrery motion (2026-11-10). Transform and opacity only. Hidden-until-revealed states apply only under `js-motion`
+   (set before paint, never with prefers-reduced-motion), and base.css stops every animation and transition for
+   reduced motion. If the observer never starts, a safety animation shows everything after 2.5 s. */
+
+@keyframes rise-in { from { opacity: 0; transform: translate3d(0, 18px, 0); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes line-up { from { transform: translate3d(0, 108%, 0); } to { transform: none; } }
+@keyframes float-y { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(0, -8px, 0); } }
+@keyframes pop-in { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+@keyframes reveal-safety { to { opacity: 1; transform: none; } }
+@keyframes shimmer { from { transform: translate3d(-100%, 0, 0); } to { transform: translate3d(100%, 0, 0); } }
+@keyframes caret { 50% { opacity: 0; } }
+@keyframes flow-dash { to { background-position: 24px 0; } }
+@keyframes flow-dash-y { to { background-position: 0 24px; } }
+
+/* ---------------------------------------------------------------- route enter */
+.route-enter { animation: rise-in 0.42s var(--ease-out) both; }
+
+/* ---------------------------------------------------------------- headline lines (hero and page heads, on load) */
+.rl { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.rl > span { display: block; }
+.js-motion .rl > span { animation: line-up 0.8s var(--ease-out) both; }
+.js-motion .rl:nth-child(2) > span { animation-delay: 0.1s; }
+.js-motion .rl:nth-child(3) > span { animation-delay: 0.2s; }
+.js-motion .load-rise { animation: rise-in 0.7s var(--ease-out) both; animation-delay: var(--d, 0.25s); }
+
+/* ---------------------------------------------------------------- reveal on enter view */
+.js-motion [data-reveal=""] { opacity: 0; transform: translate3d(0, 22px, 0); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); transition-delay: var(--d, 0s); }
+.js-motion [data-reveal=""].is-in { opacity: 1; transform: none; }
+.js-motion [data-reveal="group"] > * { opacity: 0; transform: translate3d(0, 20px, 0); transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out); }
+.js-motion [data-reveal="group"].is-in > * { opacity: 1; transform: none; }
+.js-motion [data-reveal="group"] > :nth-child(2) { transition-delay: 0.08s; }
+.js-motion [data-reveal="group"] > :nth-child(3) { transition-delay: 0.16s; }
+.js-motion [data-reveal="group"] > :nth-child(4) { transition-delay: 0.24s; }
+.js-motion [data-reveal="group"] > :nth-child(5) { transition-delay: 0.32s; }
+.js-motion [data-reveal="group"] > :nth-child(6) { transition-delay: 0.4s; }
+.js-motion [data-reveal="group"] > :nth-child(n + 7) { transition-delay: 0.46s; }
+.js-motion [data-reveal="lines"] .rl > span { animation: none; transform: translate3d(0, 108%, 0); transition: transform 0.8s var(--ease-out); }
+.js-motion [data-reveal="lines"].is-in .rl > span { transform: none; }
+.js-motion [data-reveal="lines"].is-in .rl:nth-child(2) > span { transition-delay: 0.1s; }
+.js-motion [data-reveal="lines"].is-in .rl:nth-child(3) > span { transition-delay: 0.2s; }
+.js-motion:not(.motion-ready) [data-reveal], .js-motion:not(.motion-ready) [data-reveal="group"] > *, .js-motion:not(.motion-ready) [data-reveal="lines"] .rl > span { animation: reveal-safety 0s 2.5s forwards; }
+
+/* ---------------------------------------------------------------- shared pieces */
+.float { animation: float-y 6.5s var(--ease-in-out) infinite; }
+.magnetic { display: inline-flex; will-change: transform; }
+.tilt { transform-style: preserve-3d; }
+
+/* ---------------------------------------------------------------- nav: floating and sticky on wide screens */
+@media (min-width: 1081px) {
+  .nav { position: sticky; top: 14px; z-index: 40; transition: box-shadow var(--motion-base) var(--ease-out), background var(--motion-base); }
+  .nav.is-scrolled { box-shadow: var(--shadow-float); background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(12px); }
+}
+.nav-sentinel { position: absolute; top: 0; left: 0; width: 1px; height: 40px; pointer-events: none; }
+
+/* ---------------------------------------------------------------- landing hero */
+.lp-hero h1 .accent { color: var(--brand); }
+/* The edges fade into the ground with a painted overlay, not a mask: a GPU-composited <video> can escape a CSS mask,
+   which showed the loop's hard left edge and cut strands. The overlay sits above the still and the video alike. */
+.hero-loop { position: absolute; inset: -40px -14% auto -10%; width: 124%; pointer-events: none; }
+.hero-loop > img, .hero-loop > video { display: block; width: 100%; height: auto; aspect-ratio: 1800 / 1012; object-fit: cover; }
+.hero-loop::after {
+  content: ""; position: absolute; inset: -1px; z-index: 2; pointer-events: none;
+  background:
+    linear-gradient(to right, var(--ground-light) 0%, transparent 18%),
+    linear-gradient(to left, var(--ground-light) 0%, transparent 10%),
+    linear-gradient(to bottom, var(--ground-light) 0%, transparent 12%),
+    linear-gradient(to top, var(--ground-light) 0%, transparent 14%),
+    radial-gradient(ellipse 62% 66% at 50% 48%, transparent 62%, var(--ground-light) 100%);
+}
+.hero-loop-video { position: absolute; inset: 0; z-index: 1; opacity: 0; transition: opacity 0.8s var(--ease-out); }
+.hero-loop.is-playing .hero-loop-video { opacity: 1; }
+.lp-hero-stage .hero-tilt { position: absolute; inset: 0; }
+@media (max-width: 1080px) { .hero-loop { inset: -4% -14% auto -14%; width: 128%; } }
+/* Operator and credits objects sit in their tilt and float wrappers. */
+.lp-operator-art img { width: 100%; -webkit-mask-image: radial-gradient(ellipse 60% 62% at 50% 50%, #000 60%, transparent 100%); mask-image: radial-gradient(ellipse 60% 62% at 50% 50%, #000 60%, transparent 100%); }
+.lp-credits-art { width: min(460px, 100%); justify-self: center; }
+.lp-credits-art img { width: 100%; border-radius: var(--radius-card); background: var(--ground-light); }
+.js-motion .lp-hero-stage .console { animation: rise-in 0.8s var(--ease-out) 0.45s both; }
+/* While the payer card has no result yet, a soft light passes over its empty readings. */
+.console-grid { position: relative; overflow: hidden; }
+.console.is-idle .console-grid::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 20%, rgba(217, 150, 122, 0.07) 45%, rgba(255, 255, 255, 0.6) 50%, rgba(217, 150, 122, 0.07) 55%, transparent 80%); animation: shimmer 2.6s var(--ease-in-out) infinite; pointer-events: none; }
+.console-track i { transition: width 0.9s var(--ease-out); }
+
+/* Marquee: soft edges, stops under the pointer */
+.lp-marquee { -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.lp-marquee:hover .lp-marquee-track { animation-play-state: paused; }
+
+/* ---------------------------------------------------------------- who it is for: one object per audience */
+.lp-who-art { width: 112px; height: 112px; margin: -6px 0 4px -10px; object-fit: cover; -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 54%, transparent 71%); mask-image: radial-gradient(circle at 50% 50%, #000 54%, transparent 71%); transition: transform 0.6s var(--ease-out); }
+.lp-who-grid article:hover .lp-who-art { transform: translate3d(0, -4px, 0) rotate(-2deg); }
+
+/* ---------------------------------------------------------------- four gates
+   A hairline joins the objects only in the gaps between them, at the height where Pay's light strand leaves the coin
+   (56% of the art; edges measured from the art: Set ends at 77%, Pay starts at 21%, Check spans 26% to 89%, Sign
+   starts at 21%). A soft light runs each link in turn and the next gate brightens as it arrives. One 5.6 s cycle. */
+.lp-steps::before { content: none; }
+.lp-steps li { isolation: isolate; }
+.lp-gate-art { position: relative; transform-origin: 50% 56%; }
+.lp-gate-art::before { content: ""; position: absolute; inset: 4%; border-radius: 50%; background: radial-gradient(circle, rgba(92, 128, 255, 0.34) 0%, rgba(92, 128, 255, 0.12) 42%, rgba(92, 128, 255, 0) 70%); opacity: 0; z-index: -1; pointer-events: none; }
+.lp-gate-link { position: absolute; top: 56%; height: 1px; margin-top: -0.5px; z-index: 1; background: linear-gradient(90deg, rgba(157, 180, 255, 0), rgba(157, 180, 255, 0.34) 18%, rgba(157, 180, 255, 0.34) 82%, rgba(157, 180, 255, 0)); overflow: hidden; pointer-events: none; transform-origin: left center; }
+.lp-steps li:nth-child(1) .lp-gate-link { left: 81%; width: calc(36% + 28px); }
+.lp-steps li:nth-child(2) .lp-gate-link { left: 86%; width: calc(36% + 28px); }
+.lp-steps li:nth-child(3) .lp-gate-link { left: 92%; width: calc(25% + 28px); }
+.lp-gate-link i { position: absolute; left: 0; top: 50%; width: 34%; height: 6px; margin-top: -3px; border-radius: 6px; background: radial-gradient(ellipse at center, rgba(230, 237, 255, 0.95) 0%, rgba(140, 166, 255, 0.55) 35%, rgba(92, 128, 255, 0) 70%); transform: translate3d(-100%, 0, 0); }
+@keyframes gate-light { 0%, 28%, 100% { opacity: 0; } 11% { opacity: 1; } }
+@keyframes gate-lift { 0%, 28%, 100% { transform: none; } 11% { transform: scale(1.035); } }
+@keyframes gate-run { 0% { transform: translate3d(-100%, 0, 0); } 18%, 100% { transform: translate3d(300%, 0, 0); } }
+.lp-steps-wrap.is-inview .lp-gate-art::before { animation: gate-light 5.6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.lp-steps-wrap.is-inview .lp-gate-art { animation: gate-lift 5.6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.lp-steps-wrap.is-inview .lp-gate-link i { animation: gate-run 5.6s linear infinite; }
+.lp-steps li:nth-child(2) .lp-gate-art, .lp-steps li:nth-child(2) .lp-gate-art::before { animation-delay: 0.62s; }
+.lp-steps li:nth-child(3) .lp-gate-art, .lp-steps li:nth-child(3) .lp-gate-art::before { animation-delay: 1.23s; }
+.lp-steps li:nth-child(4) .lp-gate-art, .lp-steps li:nth-child(4) .lp-gate-art::before { animation-delay: 1.85s; }
+.lp-steps li:nth-child(1) .lp-gate-link i { animation-delay: 0.5s; }
+.lp-steps li:nth-child(2) .lp-gate-link i { animation-delay: 1.12s; }
+.lp-steps li:nth-child(3) .lp-gate-link i { animation-delay: 1.73s; }
+/* Entering: objects settle in turn, then each link draws toward the next gate. */
+.js-motion .lp-steps .lp-gate-art img { opacity: 0; transform: scale(0.92); transition: opacity 0.7s var(--ease-out), transform 0.8s var(--ease-out); }
+.js-motion .lp-steps.is-in .lp-gate-art img { opacity: 1; transform: none; }
+.js-motion .lp-steps.is-in li:nth-child(2) .lp-gate-art img { transition-delay: 0.18s; }
+.js-motion .lp-steps.is-in li:nth-child(3) .lp-gate-art img { transition-delay: 0.36s; }
+.js-motion .lp-steps.is-in li:nth-child(4) .lp-gate-art img { transition-delay: 0.54s; }
+.js-motion .lp-steps .lp-gate-link { transform: scaleX(0); transition: transform 0.7s var(--ease-out); }
+.js-motion .lp-steps.is-in .lp-gate-link { transform: none; }
+.js-motion .lp-steps.is-in li:nth-child(1) .lp-gate-link { transition-delay: 0.35s; }
+.js-motion .lp-steps.is-in li:nth-child(2) .lp-gate-link { transition-delay: 0.53s; }
+.js-motion .lp-steps.is-in li:nth-child(3) .lp-gate-link { transition-delay: 0.71s; }
+.js-motion:not(.motion-ready) .lp-steps .lp-gate-art img, .js-motion:not(.motion-ready) .lp-steps .lp-gate-link { animation: reveal-safety 0s 2.5s forwards; }
+/* Two columns and narrower: no links, the gates still brighten in turn. */
+@media (max-width: 1080px) { .lp-gate-link { display: none; } }
+
+/* ---------------------------------------------------------------- jobs: the object lifts under the pointer */
+.lp-job { transition: transform 0.5s var(--ease-out); }
+.lp-job-art { transition: box-shadow 0.5s var(--ease-out); }
+.lp-job:hover .lp-job-art { box-shadow: var(--shadow-float); }
+.lp-job:hover .lp-job-art img { transform: translate3d(0, -6px, 0) rotate(-1.5deg) scale(1.04); }
+
+/* ---------------------------------------------------------------- code: lines arrive one after another */
+.lp-code .cl { display: block; min-height: 1.85em; }
+.js-motion [data-reveal="code"] .cl { opacity: 0; transition: opacity 0.35s var(--ease-out); transition-delay: calc(var(--i) * 45ms + 0.1s); }
+.js-motion [data-reveal="code"].is-in .cl { opacity: 1; }
+.js-motion:not(.motion-ready) [data-reveal="code"] .cl { animation: reveal-safety 0s 2.5s forwards; }
+.lp-code .cc { color: #8fa3e6; }
+.lp-code .caret { display: inline-block; width: 0.6em; height: 1.1em; margin-left: 2px; vertical-align: -0.18em; background: #ebc2ae; animation: caret 1.05s steps(1) infinite; }
+
+/* ---------------------------------------------------------------- mechanism strips (landing ORRY and ORRY pages) */
+.flow { display: flex; align-items: center; gap: 0; flex-wrap: nowrap; padding: 22px 24px; border-radius: var(--radius-card); background: var(--ground-deep); color: #e9ecef; box-shadow: inset 0 0 0 1px var(--line-dark); overflow: hidden; }
+.flow-node { flex: none; display: inline-flex; align-items: center; min-height: 40px; padding: 8px 16px; border-radius: 12px; background: rgba(236, 230, 205, 0.07); box-shadow: inset 0 0 0 1px rgba(236, 230, 205, 0.16); font-family: var(--display); font-weight: 600; font-size: 0.92rem; letter-spacing: -0.01em; white-space: nowrap; }
+.flow-node.is-accent { background: var(--brand); box-shadow: 0 10px 24px -12px rgba(217, 150, 122, 0.9); color: #fff; }
+.flow-fork { display: grid; gap: 10px; flex: none; }
+.flow-link { flex: 1 1 28px; min-width: 28px; height: 2px; margin: 0 10px; background: repeating-linear-gradient(90deg, rgba(157, 180, 255, 0.75) 0 12px, transparent 12px 24px); background-size: 24px 2px; }
+.flow.is-inview .flow-link { animation: flow-dash 1.1s linear infinite; }
+.lp-flows { display: grid; gap: 14px; margin-top: 48px; max-width: 980px; }
+.rc-flow { margin: -18px 0 36px; }
+@media (max-width: 760px) {
+  .flow { flex-direction: column; align-items: stretch; padding: 18px; }
+  .flow-node { justify-content: center; white-space: normal; text-align: center; }
+  .flow-fork { grid-template-columns: 1fr 1fr; }
+  .flow-link { flex: none; width: 2px; height: 22px; min-width: 0; margin: 6px auto; background: repeating-linear-gradient(180deg, rgba(157, 180, 255, 0.75) 0 8px, transparent 8px 16px); background-size: 2px 16px; }
+  .flow.is-inview .flow-link { animation-name: flow-dash-y; }
+}
+
+/* ---------------------------------------------------------------- FAQ */
+.faq-item { border-top: 1px solid var(--hairline); }
+.faq-item:last-child { border-bottom: 1px solid var(--hairline); }
+.faq-item h3 { margin: 0; }
+.faq-item button { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; min-height: 64px; padding: 18px 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-family: var(--display); font-weight: 600; font-size: 1.2rem; letter-spacing: -0.02em; color: var(--ink); }
+.faq-item button:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; border-radius: 6px; }
+.faq-icon { position: relative; flex: none; width: 18px; height: 18px; transition: transform 0.35s var(--ease-out); }
+.faq-icon::before, .faq-icon::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; border-radius: 2px; background: var(--brand); }
+.faq-icon::after { transform: rotate(90deg); }
+.faq-item.is-open .faq-icon { transform: rotate(45deg); }
+.faq-item p { margin: 0 0 20px; color: var(--muted); line-height: 1.6; max-width: 70ch; }
+
+/* ---------------------------------------------------------------- product pages */
+.page-head-art, .rc-head-art { animation: float-y 7s var(--ease-in-out) infinite; }
+.js-motion .page-head-lead, .js-motion .rc-head .page-head-lead { animation: rise-in 0.7s var(--ease-out) 0.22s both; }
+.js-motion .page-head-art, .js-motion .rc-head-art { animation: fade-in 0.9s var(--ease-out) 0.1s both, float-y 7s var(--ease-in-out) 1s infinite; }
+.js-motion .guide-steps.is-in .guide-n { animation: pop-in 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) both; }
+.js-motion .guide-steps.is-in li:nth-child(2) .guide-n { animation-delay: 0.1s; }
+.js-motion .guide-steps.is-in li:nth-child(3) .guide-n { animation-delay: 0.2s; }
+.js-motion .stack > * { animation: rise-in 0.6s var(--ease-out) both; }
+.js-motion .stack > :nth-child(2) { animation-delay: 0.08s; }
+.js-motion .stack > :nth-child(3) { animation-delay: 0.16s; }
+.js-motion .stack > :nth-child(4) { animation-delay: 0.24s; }
+.js-motion .stack > :nth-child(n + 5) { animation-delay: 0.3s; }
+/* A result arrives: its rows come in one after another. */
+.js-motion .kv > *, .js-motion .preview dl > div, .js-motion .result-rows > * { animation: rise-in 0.45s var(--ease-out) both; }
+.js-motion .kv > :nth-child(n + 3) { animation-delay: 0.04s; }
+.js-motion .kv > :nth-child(n + 5) { animation-delay: 0.08s; }
+.js-motion .kv > :nth-child(n + 7) { animation-delay: 0.12s; }
+.js-motion .kv > :nth-child(n + 9) { animation-delay: 0.16s; }
+.js-motion .kv > :nth-child(n + 11) { animation-delay: 0.2s; }
+.js-motion .preview dl > div:nth-child(2) { animation-delay: 0.04s; }
+.js-motion .preview dl > div:nth-child(3) { animation-delay: 0.08s; }
+.js-motion .preview dl > div:nth-child(4) { animation-delay: 0.12s; }
+.js-motion .preview dl > div:nth-child(5) { animation-delay: 0.16s; }
+.js-motion .preview dl > div:nth-child(n + 6) { animation-delay: 0.2s; }
+.spend-track i, .mini-track i, .rc-bar i { transition: width 0.9s var(--ease-out); }
+
+/* ORRY head with its object */
+.rc-head.has-art { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+.rc-head-art { width: clamp(200px, 22vw, 300px); aspect-ratio: 1; object-fit: cover; -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 54%, transparent 71%); mask-image: radial-gradient(circle at 50% 50%, #000 54%, transparent 71%); }
+.rc-tabs a { transition: color var(--motion-fast); flex: none; white-space: nowrap; }
+.rc-tab-line { position: absolute; left: 0; right: 0; bottom: -15px; height: 2px; background: var(--brand); border-radius: 2px; }
+.rc-tabs a[aria-current="page"]::after { content: none; }
+@media (max-width: 760px) {
+  .rc-head.has-art { grid-template-columns: minmax(0, 1fr); }
+  .rc-head-art { width: 180px; grid-row: 1; margin: -10px 0 -18px -16px; }
+  .rc-flow { margin: -8px 0 28px; }
+}
+
+/* Phones: section titles flow as normal text (forced line breaks would orphan words) and rise in as one block. */
+@media (max-width: 760px) {
+  [data-reveal="lines"] .rl, [data-reveal="lines"] .rl > span { display: inline; overflow: visible; padding: 0; margin: 0; }
+  [data-reveal="lines"] .rl + .rl::before { content: " "; }
+  .js-motion [data-reveal="lines"] .rl > span, .js-motion [data-reveal="lines"].is-in .rl > span { transform: none; transition: none; animation: none; }
+  .js-motion [data-reveal="lines"] { opacity: 0; transform: translate3d(0, 18px, 0); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+  .js-motion [data-reveal="lines"].is-in { opacity: 1; transform: none; }
+}

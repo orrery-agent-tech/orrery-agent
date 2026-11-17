@@ -1,0 +1,26 @@
+{
+  "name": "@orrery/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "api": "tsx src/bin/api.ts",
+    "prober": "tsx src/bin/prober.ts",
+    "indexer": "tsx src/bin/indexer.ts",
+    "migrate": "tsx src/bin/migrate.ts",
+    "keeper": "tsx src/bin/keeper.ts",
+    "market-keeper": "tsx src/bin/market-keeper.ts",
+    "market-relay": "tsx src/bin/market-relay.ts"
+  },
+  "dependencies": {
+    "@orrery/shared": "workspace:*",
+    "fastify": "^5.2.0",
+    "postgres": "^3.4.5",
+    "undici": "^7.2.0",
+    "viem": "^2.21.0",
+    "zod": "^3.24.1"
+  }
+}

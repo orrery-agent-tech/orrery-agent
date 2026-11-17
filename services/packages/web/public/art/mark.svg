@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+<defs><mask id="g"><rect width="40" height="40" fill="#fff"/><path d="M39 20A19 5.4 0 0 1 1 20" fill="none" stroke="#000" stroke-width="4" transform="rotate(-22 20 20)"/></mask></defs>
+<rect width="96" height="96" rx="24" fill="#0f1a2e"/>
+<g transform="translate(14 14) scale(1.7)">
+<path mask="url(#g)" fill="#d9967a" fill-rule="evenodd" transform="rotate(-14 20 20)" d="M4.2 20a15.8 16.4 0 1 0 31.6 0a15.8 16.4 0 1 0-31.6 0ZM10.4 20a9.6 12.9 0 1 0 19.2 0a9.6 12.9 0 1 0-19.2 0Z"/>
+<path d="M37.2 21.6A19 5.4 0 0 1 1 20" fill="none" stroke="#d9967a" stroke-width="1.5" stroke-linecap="round" transform="rotate(-22 20 20)"/>
+<circle cx="36.6" cy="12.9" r="2.6" fill="#d9967a"/>
+</g>
+</svg>

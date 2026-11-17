@@ -1,0 +1,26 @@
+{
+  "name": "orrery-services",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.15.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "gen:abi": "node scripts/gen-abi.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:unit": "vitest run --dir packages",
+    "test:integration": "vitest run --dir test"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2",
+    "tsx": "^4.19.2",
+    "vitest": "^3.0.0",
+    "viem": "^2.21.0",
+    "@orrery/sdk": "workspace:*",
+    "@orrery/server": "workspace:*",
+    "@orrery/shared": "workspace:*"
+  }
+}

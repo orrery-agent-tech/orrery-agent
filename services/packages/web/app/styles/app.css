@@ -1,0 +1,115 @@
+/* Orrery web app additions to the Current Limit style (design/directions/03-current-limit/STYLE.md). */
+:root{--display:var(--font-display),"Jost",sans-serif;--text:var(--font-text),"Albert Sans",sans-serif;--mono:var(--font-mono),"IBM Plex Mono",monospace}
+.wallet-wrap{position:relative}
+.wallet-menu{position:absolute;right:0;top:calc(100% + 10px);z-index:40;min-width:250px;background:#fff;color:var(--ink);border:1px solid var(--hairline);border-radius:var(--radius-md);box-shadow:var(--shadow-float);padding:8px}
+.wallet-menu button,.wallet-menu a{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:0;background:transparent;border-radius:8px;font-weight:700;text-align:left;color:inherit}
+.wallet-menu button:hover,.wallet-menu a:hover{background:color-mix(in srgb,var(--brand) 12%,transparent)}
+.wallet-menu img{width:24px;height:24px;border-radius:6px}
+.wallet-menu p{font-size:.82rem;padding:8px 12px;margin:0;opacity:.8}
+.wallet.connected{font-family:var(--mono);font-size:.8rem}
+.wallet.warn{border-color:var(--warning);color:var(--warning)}
+.notice{margin-top:14px;padding:12px 14px;border-radius:var(--radius-md);border:2px solid var(--ink);background:#fff;font-size:.88rem}
+.notice.error{border-color:var(--danger);color:var(--danger)}
+.notice.ok{border-color:var(--success);color:var(--success)}
+.field{display:flex;flex-direction:column;gap:6px;font-size:.8rem;font-weight:700}
+.field input,.field select,.field textarea{height:48px;border:2px solid var(--ink);border-radius:10px;background:#fff;color:var(--ink);padding:10px 12px;font-family:var(--mono);font-size:.85rem}
+.field textarea{height:auto;min-height:90px;resize:vertical}
+.field small{font-weight:500;opacity:.75}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.form-grid.two{grid-template-columns:1fr 1fr}
+.panel{background:#fff;border:1px solid var(--hairline);border-radius:var(--radius-lg);box-shadow:var(--shadow-soft);padding:30px}
+.panel + .panel{margin-top:28px}
+.panel h2{font-size:clamp(1.6rem,2.6vw,2.2rem);margin:8px 0 12px}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.stack{display:flex;flex-direction:column;gap:18px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.mono{font-family:var(--mono)}
+.key-box{font-family:var(--mono);font-size:.82rem;word-break:break-all;background:var(--ground-dark);color:#f6e4db;padding:16px;border-radius:var(--radius-md)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:10px 22px;margin:18px 0}
+.kv dt{opacity:.7;font-size:.88rem}
+.kv dd{margin:0;font-family:var(--mono);font-size:.85rem;font-weight:700;word-break:break-all}
+.pill-status{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;border:2px solid var(--ink);font-weight:700;font-size:.8rem}
+.pill-status.active{background:#d7e9e1}
+.pill-status.paused,.pill-status.pending{background:#ffe6c9}
+.pill-status.revoked,.pill-status.expired,.pill-status.none{background:#eceef1}
+.docs-main{max-width:980px;padding:70px 32px 110px;margin:auto}
+.docs-main h1{font-size:clamp(2.6rem,4.4vw,4.2rem);margin:12px 0 18px}
+.docs-main h2{font-size:clamp(1.6rem,2.6vw,2.2rem);margin:56px 0 14px}
+.docs-main p{margin:12px 0;max-width:70ch}
+.docs-main pre{background:var(--ground-dark);color:#f6e4db;padding:24px;border-radius:var(--radius-md);overflow:auto;font-family:var(--mono);font-size:.84rem;line-height:1.8;border:3px solid #ebc2ae;box-shadow:var(--shadow-float)}
+.docs-main table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.9rem}
+.docs-main td,.docs-main th{border-bottom:1px solid var(--hairline);padding:10px 8px;text-align:left;vertical-align:top}
+.docs-main td:first-child{font-family:var(--mono);font-weight:700;white-space:nowrap}
+.console-empty{opacity:.6}
+@media(max-width:900px){.form-grid,.form-grid.two{grid-template-columns:1fr}.panel{padding:22px}}
+.signer-layout>*,.app-shell>*,.form-grid>*{min-width:0}
+.identity-list dd{word-break:break-all;text-align:right}
+@media(max-width:900px){
+  .signer-layout{grid-template-columns:1fr}
+  .signer-overview,.signer-caps{min-height:0;padding:24px}
+  .identity-list div{flex-direction:column;gap:4px}
+  .identity-list dd{text-align:left}
+  .signer-main,.app-main,.docs-main{padding:44px 20px 80px}
+  .docs-main td:first-child{white-space:normal;word-break:break-word}
+  .docs-main pre{font-size:.75rem;padding:16px}
+  .docs-main table,.docs-main tbody,.docs-main tr,.docs-main td{display:block;width:100%}
+  .editor{padding:22px}
+  .token-row{grid-template-columns:1fr}
+  .editor-two{grid-template-columns:1fr}
+  .kv{grid-template-columns:1fr}
+}
+.overview-head>div{min-width:0}.overview-head p{word-break:break-all}.big-symbol{flex:none}
+@media(max-width:600px){.big-symbol{width:64px;height:64px;font-size:2rem}}
+.signer-top p,.signer-top h1{word-break:break-all}
+/* overflow:clip does not create a scroll container, so focusing the console input cannot shift the hero sideways */
+.hero-shell{overflow:clip}
+.landing section:not(.hero){overflow:clip}
+
+/* credits pricing: the pack and the platform plan side by side */
+.price-options{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:22px;padding-top:22px;border-top:1px solid var(--hairline)}
+.price-options h3{margin:0 0 6px;font-size:1.1rem}
+.price-options p{margin:0 0 16px;color:var(--muted)}
+.muted-line{margin-top:16px;color:var(--muted);font-size:.9rem}
+@media (max-width:720px){.price-options{grid-template-columns:1fr;gap:22px}}
+
+/* operator: one-click setup (account, agent, signer), the setup steps and the funding rows */
+.field-with-action{display:flex;flex-direction:column;gap:10px;align-items:flex-start;min-width:0}
+.field-with-action .field{width:100%}
+.setup-steps{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:10px}
+.setup-steps li{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 16px;border:1px solid var(--hairline);border-radius:14px;background:var(--ground-light)}
+.setup-steps li[data-done="true"]{background:#e8f4ee;border-color:color-mix(in srgb,var(--success) 35%,transparent)}
+.setup-steps li>div{flex:1 1 220px;min-width:0}
+.setup-steps strong{display:block;font-size:.95rem}
+.setup-steps p{margin:2px 0 0;font-size:.85rem;color:var(--muted)}
+.setup-mark{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:.8rem;background:#fff;border:1px solid var(--hairline)}
+.setup-steps li[data-done="true"] .setup-mark{background:var(--success);border-color:var(--success);color:#fff}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border:1px solid var(--hairline);border-radius:10px;background:var(--ground-light)}
+.seg button{border:0;background:transparent;color:var(--ink);font-weight:700;font-size:.8rem;padding:8px 12px;border-radius:7px;min-height:36px}
+.seg button[aria-pressed="true"]{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12);color:var(--brand)}
+.check-line{display:flex;align-items:center;gap:10px;margin-top:14px;font-weight:700;font-size:.88rem}
+.check-line input{width:18px;height:18px;accent-color:var(--brand)}
+.editor-more summary{display:flex;justify-content:space-between;align-items:center;gap:20px;cursor:pointer;list-style:none}
+.editor-more summary::-webkit-details-marker{display:none}
+.editor-more summary span{font-size:.85rem;color:var(--muted);text-align:right}
+.editor-more summary h3::after{content:"+";margin-left:10px;color:var(--brand)}
+.editor-more[open] summary h3::after{content:"\2212"}
+.fund-rows{display:grid;gap:12px;margin-top:16px}
+.fund-row{display:grid;grid-template-columns:1.4fr 1fr auto;gap:16px;align-items:end}
+.fund-row>div strong{display:block;font-size:.9rem}
+.fund-row>div span{font-size:.85rem;font-weight:700}
+.fund-row label{font-size:.8rem;font-weight:700;position:relative}
+.fund-row input{display:block;width:100%;height:50px;border:1px solid var(--hairline);background:var(--ground-light);color:var(--ink);border-radius:4px;padding:10px 52px 10px 12px;margin-top:7px;font-family:var(--mono)}
+.fund-row label small{position:absolute;right:10px;bottom:15px;font-size:.66rem}
+.copy-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.snippet{background:var(--ground-dark);color:#f6e4db;padding:16px;border-radius:var(--radius-md);overflow:auto;font-family:var(--mono);font-size:.8rem;line-height:1.7;margin:12px 0 0;white-space:pre}
+@media(max-width:720px){.fund-row{grid-template-columns:1fr}.row-heading{flex-wrap:wrap}}
+.muted-line a,.setup-steps a{color:var(--brand);font-weight:600}
+
+/* phones: every open menu stays on screen. The links and "Coming soon" share one wrapping row instead of a sideways scroll
+   that left Credits and Docs out of sight at 375px. */
+@media(max-width:620px){
+  .nav .nav-menu{flex-wrap:wrap;gap:0 18px}
+  .nav .nav-menu .nav-links{display:contents}
+  .nav .nav-menu .nav-links a{font-size:.82rem;min-height:36px}
+  .nav .nav-menu .nav-more{font-size:.82rem;min-height:36px}
+}
