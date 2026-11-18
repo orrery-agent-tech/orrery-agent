@@ -14,6 +14,8 @@ import { ExitConnect, Fig, NoticeLine, OrryHead, Row } from "../orry/parts";
 
 const abi = iDataProviderRegistryAbi as Abi;
 const n = (v: number | string) => Number(v).toLocaleString("en-US");
+/** Before ORRY exists the registry lists any wallet with no stake, and providers are paid in USDG only (owner 2026-11-18). */
+const USDG_ONLY = !ORRY.token;
 const payments = (count: number) => (count === 0 ? "" : ` · ${n(count)} ${count === 1 ? "payment" : "payments"} over the last 30 days`);
 
 export function ProvidersView() {
@@ -26,10 +28,17 @@ export function ProvidersView() {
         kicker="Data providers"
         title="Charge agents per call for your data."
         lead={
-          <p>
-            Stake ORRY worth at least {min ? dollars(min) : <Fig />} and your x402 endpoint goes on the list. Agents pay into your payment address, Orrery keeps
-            1%, and the rest moves on to your wallet.
-          </p>
+          USDG_ONLY ? (
+            <p>
+              Put your x402 endpoint on the list and agents pay you in USDG for every call. Payments land in your payment address, Orrery keeps 1%, and the
+              rest moves on to your wallet.
+            </p>
+          ) : (
+            <p>
+              Stake ORRY worth at least {min ? dollars(min) : <Fig />} and your x402 endpoint goes on the list. Agents pay into your payment address, Orrery
+              keeps 1%, and the rest moves on to your wallet.
+            </p>
+          )
         }
       />
       <section className="mc-sec">
@@ -48,7 +57,7 @@ export function ProvidersView() {
                     <strong>{p.name}</strong>
                     {p.description ? <p>{p.description}</p> : null}
                     <p>
-                      {dollars(p.priceUsdg)} per call · {dollars(p.stakeUsd)} staked
+                      {dollars(p.priceUsdg)} per call{USDG_ONLY ? "" : ` · ${dollars(p.stakeUsd)} staked`}
                       {payments(p.settled30d.reduce((a, s) => a + s.payments, 0))}
                     </p>
                   </div>
@@ -139,10 +148,12 @@ function Listing({ provider, onChange }: { provider: Address; onChange: () => vo
         <h2>Your listing</h2>
         <dl className="rc-rows">
           <Row label="Status">{listing === undefined ? <Fig /> : listed ? (active ? "Listed" : "Listed · stake under the minimum") : "Not listed"}</Row>
-          <Row label="ORRY staked" hint={min !== undefined ? `${dollars(min)} minimum to list` : undefined}>{stake === undefined ? <Fig /> : dollars(stake)}</Row>
+          {USDG_ONLY ? null : (
+            <Row label="ORRY staked" hint={min !== undefined ? `${dollars(min)} minimum to list` : undefined}>{stake === undefined ? <Fig /> : dollars(stake)}</Row>
+          )}
           <Row label="Payment address">{splitter ? <code>{splitter}</code> : <Fig />}</Row>
         </dl>
-        {stake !== undefined && !staked ? (
+        {!USDG_ONLY && stake !== undefined && !staked ? (
           <p className="mc-note">
             <Link href="/stake">Stake ORRY</Link> up to the listing minimum.
           </p>
@@ -181,8 +192,9 @@ function Listing({ provider, onChange }: { provider: Address; onChange: () => vo
         <h2>Settling payments at your endpoint</h2>
         <p className="mc-note">
           Reply with x402 <code>exact</code> terms that set <code>payTo</code> to your payment address, then settle through Orrery&apos;s data facilitator
-          {API_URL ? <> at <code>{`${API_URL}/v1/data/x402`}</code></> : null}. Agents can pay in USDG{ADDRESSES.usdg ? <> (<code>{short(ADDRESSES.usdg)}</code>)</> : null} or in ORRY through Permit2.
-          Orrery&apos;s keeper moves the balance of your payment address on to your wallet, and fees paid in ORRY are burned.
+          {API_URL ? <> at <code>{`${API_URL}/v1/data/x402`}</code></> : null}. Agents can pay in USDG{ADDRESSES.usdg ? <> (<code>{short(ADDRESSES.usdg)}</code>)</> : null}
+          {USDG_ONLY ? "." : " or in ORRY through Permit2."} Orrery&apos;s keeper moves the balance of your payment address on to your wallet
+          {USDG_ONLY ? "." : ", and fees paid in ORRY are burned."}
         </p>
       </section>
     </>

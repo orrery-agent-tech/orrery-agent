@@ -24,6 +24,7 @@ import { API_URL, activeChain } from "@/lib/config";
 import { short } from "@/lib/format";
 import { dollars, useDataCatalog, useDataSigner } from "@/lib/data/api";
 import { useTx } from "@/lib/orry/chain";
+import { ORRY } from "@/lib/orry/config";
 import { useReleases } from "@/lib/orry/releases";
 import { ExitConnect, Fig, NoticeLine, OrryHead, Row } from "../orry/parts";
 
@@ -105,7 +106,8 @@ export function DataView() {
         <section className="mc-sec">
           <h2>Datasets from outside providers</h2>
           <p className="mc-note">
-            Providers who stake ORRY publish their own x402 endpoints. <Link href="/data/providers">Browse the providers</Link>
+            {ORRY.token ? "Providers who stake ORRY publish their own x402 endpoints." : "Independent providers publish their own x402 endpoints, paid per call in USDG."}{" "}
+            <Link href="/data/providers">Browse the providers</Link>
           </p>
         </section>
       ) : null}
