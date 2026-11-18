@@ -43,6 +43,12 @@ export interface CommunityConfig {
   hideThreshold: number;
   maxTextBytes: number;
   templateBurnBps: number;
+  /** What the template market charges: "usdg" (`TemplateMarketUsdg`), "orry" (`TemplateMarket`), null without one. */
+  templatePayment: "usdg" | "orry" | null;
+  /** The treasury's share of a USDG template sale, in basis points. */
+  templateFeeBps: number;
+  /** The token a USDG template sale moves (the market's `usdg()`). */
+  templateAsset: Address | null;
   checkWindowSeconds: number;
 }
 
@@ -78,6 +84,9 @@ export function parseCommunityConfig(o: J): CommunityConfig {
     hideThreshold: n(o.hideThreshold),
     maxTextBytes: n(o.maxTextBytes),
     templateBurnBps: n(o.templateBurnBps),
+    templatePayment: o.templatePayment === "usdg" || o.templatePayment === "orry" ? o.templatePayment : null,
+    templateFeeBps: n(o.templateFeeBps),
+    templateAsset: addr(o.templateAsset),
     checkWindowSeconds: n(o.checkWindowSeconds),
   };
 }
@@ -104,6 +113,12 @@ const NEEDS: Record<CommunityFeature, (keyof CommunityAddresses)[]> = {
   "template-market": ["templates", "orry"],
 };
 
+/** A USDG template market needs no ORRY: only its own address and the token it charges. */
+function needs(f: CommunityFeature, config: CommunityConfig): boolean {
+  if (f === "template-market" && config.templatePayment === "usdg") return Boolean(config.addresses.templates && config.templateAsset);
+  return NEEDS[f].every((k) => config.addresses[k]);
+}
+
 export interface Community {
   /** False until the release switch and the config have answered (or cannot). */
   ready: boolean;
@@ -125,7 +140,7 @@ export function useCommunity(): Community {
   return {
     ready: releases.ready && settled,
     config,
-    live: (f) => Boolean(config && open(f) && NEEDS[f].every((k) => config.addresses[k])),
+    live: (f) => Boolean(config && open(f) && needs(f, config)),
   };
 }
 

@@ -41,6 +41,8 @@ export const communityErrorsAbi = parseAbi([
   "error NotListed()",
   "error AlreadyLicensed()",
   "error OwnTemplate()",
+  "error EmptyHash()",
+  "error BadUri()",
   "error SelfReferral()",
   "error AlreadyLinked()",
   "error BadStatus()",
@@ -67,8 +69,8 @@ const until = (t: unknown) => Number(t ?? 0) - Math.floor(Date.now() / 1000);
 const ERRORS: Record<string, (a: readonly unknown[]) => string> = {
   ZeroAddress: () => "A wallet address is required.",
   PriceNotReady: () => "The ORRY price reading is still settling. Send it again shortly.",
-  PriceAboveMax: () => "The ORRY price changed after the quote was taken. Send again at the current price.",
-  InexactTransfer: () => "The ORRY received differs from the amount sent.",
+  PriceAboveMax: () => "The price changed after it was shown. Check the current price and send again.",
+  InexactTransfer: () => "The token transfer did not go through in full. Check the balance and the approval, then send again.",
   UnknownRoom: () => "No room exists under that id.",
   BelowRoomStake: (a) => `Entry needs ${usd(big(a[1]))} or more earning in Stake. This wallet has ${usd(big(a[0]))}.`,
   BadText: () => "Messages must have text and fit the room's length.",
@@ -88,6 +90,8 @@ const ERRORS: Record<string, (a: readonly unknown[]) => string> = {
   NotListed: () => "This template is off the shelf at the moment.",
   AlreadyLicensed: () => "A licence for this template is already in this wallet.",
   OwnTemplate: () => "You created this template, so it is already yours to use.",
+  EmptyHash: () => "A listing needs the policy file's content hash.",
+  BadUri: () => "The file address must be 1 to 512 characters.",
   SelfReferral: () => "Referral links work for other wallets, not the one that made them.",
   AlreadyLinked: () => "A referrer is already on record for this wallet.",
   BadStatus: () => "No prize is attached to this event.",
@@ -127,7 +131,8 @@ export interface TxSteps {
   send: (c: Call) => Promise<Hex>;
   step: (t: string) => void;
   /** Approves `amount` of ORRY to `spender` unless the allowance already covers it. */
-  approve: (token: Address, spender: Address, amount: bigint) => Promise<void>;
+  /** Approves `amount` of `token` for `spender` when the allowance is short; `symbol` names the token in the step. */
+  approve: (token: Address, spender: Address, amount: bigint, symbol?: string) => Promise<void>;
 }
 export type Run = (label: string, fn: (h: TxSteps) => Promise<string | void>) => Promise<boolean>;
 
@@ -156,11 +161,11 @@ export function useCommunityTx() {
     setBusy(label);
     setNotice({ tone: "", text: `${label}. Waiting for your wallet.` });
     const step = (t: string) => setNotice({ tone: "", text: t });
-    const approve = async (token: Address, spender: Address, amount: bigint) => {
+    const approve = async (token: Address, spender: Address, amount: bigint, symbol = "ORRY") => {
       if (!pub || !account) throw new Error("A connected wallet is needed for this.");
       const current = await pub.readContract({ address: token, abi: erc20Abi, functionName: "allowance", args: [account, spender] });
       if (current >= amount) return;
-      step("Your wallet asks you to approve ORRY first.");
+      step(`Your wallet asks you to approve ${symbol} first.`);
       await send({ address: token, abi: erc20Abi as Abi, functionName: "approve", args: [spender, amount] });
     };
     try {
