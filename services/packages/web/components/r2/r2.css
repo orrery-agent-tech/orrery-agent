@@ -1,0 +1,32 @@
+/* Lane L3 pages (predict, limit orders, gas): the Current Limit tokens and the rc- components, plus the pool split bar,
+   the one figure that is this product's own. */
+.r2-page .r2-split { display: flex; flex-wrap: wrap; min-width: 150px; }
+.r2-page .r2-split > span { display: block; height: 8px; min-width: 2px; }
+.r2-page .r2-split-yes { background: var(--success); border-radius: 4px 0 0 4px; }
+.r2-page .r2-split-no { background: var(--danger); border-radius: 0 4px 4px 0; opacity: .85; }
+.r2-page .r2-split small { flex-basis: 100%; display: flex; justify-content: space-between; font: 600 .74rem var(--mono); color: var(--muted); margin-top: 4px; }
+.r2-page .r2-split small b:first-child { color: var(--success); }
+.r2-page .r2-split small b:last-child { color: var(--danger); }
+.r2-page .r2-pick { all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+.r2-page .r2-pick strong { font-weight: 700; }
+.r2-page .r2-pick small { color: var(--muted); font-size: .78rem; }
+.r2-page .r2-pick:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; }
+.r2-page tr.is-picked td { background: color-mix(in srgb, var(--brand) 6%, transparent); }
+.r2-page .r2-desk-title { font-size: 1.15rem; line-height: 1.35; margin: 0 0 14px; }
+.r2-page .r2-desk .r2-split { margin-bottom: 18px; }
+.r2-page .r2-check { display: flex; align-items: center; gap: 8px; font-size: .9rem; }
+.r2-page .r2-choices { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: .88rem; }
+.r2-page .r2-choices span { color: var(--muted); margin-right: 4px; }
+.r2-page .r2-choices button { border: 1px solid var(--hairline); background: transparent; border-radius: var(--radius-sm); padding: 6px 10px; font: inherit; cursor: pointer; }
+.r2-page .r2-choices button[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: #fff; }
+.r2-page .r2-create { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: end; margin: 8px 0 12px; }
+.r2-page .r2-create label, .r2-page .r2-field { display: flex; flex-direction: column; gap: 6px; font-size: .86rem; color: var(--muted); }
+.r2-page .r2-create select, .r2-page .r2-field input { font: inherit; color: var(--ink); padding: 10px 12px; border: 1px solid var(--hairline); border-radius: var(--radius-sm); background: #fff; min-width: 0; }
+.r2-page .r2-field input { font-family: var(--mono); font-size: .85rem; }
+.r2-page .r2-quote { font-size: .92rem; margin: 6px 0 14px; }
+.r2-page .r2-marks { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.r2-page .r2-dev .mono { word-break: break-all; font-size: .82rem; }
+@media (max-width: 760px) {
+  .r2-page .r2-create { grid-template-columns: 1fr; }
+  .r2-page .r2-split { min-width: 0; }
+}

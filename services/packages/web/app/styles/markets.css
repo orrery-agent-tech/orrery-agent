@@ -1,0 +1,136 @@
+/* Market pages (Stocks, Private Swap, Dark Pool) on the ORRY surfaces. The batch clock is the page's one moving part:
+   two bars for the sealing and reveal windows with the current moment running through them. */
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* The company's official mark on a light plate (dark marks such as Apple's need it) */
+.mk-mark { display: inline-block; flex: none; padding: 3px; border-radius: 10px; object-fit: contain; background: #fff; box-shadow: inset 0 0 0 1px #e3e8ee; }
+
+/* Batch clock */
+.mk-clock { margin-top: 12px; }
+.rc-side > .mk-clock { margin-top: 0; padding: 20px 22px 18px; border-radius: var(--radius-card); background: #fff; box-shadow: var(--shadow-soft); }
+.mk-clock-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 0.86rem; color: var(--muted); }
+.mk-clock-head b { color: var(--ink); font-weight: 700; }
+.mk-clock-head strong { font-family: var(--display); font-weight: 600; font-size: 1.05rem; color: var(--ink); letter-spacing: -0.015em; }
+.mk-clock-head strong .mono { font-family: var(--mono); font-size: 0.95rem; margin-left: 4px; font-variant-numeric: tabular-nums; }
+.mk-bar { display: flex; gap: 4px; height: 12px; margin-top: 12px; }
+.mk-bar span { position: relative; display: block; height: 100%; border-radius: 6px; background: #e6eaf0; overflow: hidden; }
+.mk-bar span i { display: block; height: 100%; background: var(--brand); border-radius: 6px; transition: width 1s linear; }
+.mk-bar span + span i { background: var(--ink); }
+.mk-bar span.is-done i { width: 100% !important; opacity: 0.35; }
+.mk-clock-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; font-size: 0.78rem; color: var(--muted); }
+.mk-clock-foot span:last-child { text-align: right; }
+.mk-clock-count { margin-top: 10px; font-size: 0.86rem; color: #1d2c47; }
+.mk-clock.is-wait .mk-clock-head strong { color: #b4bccb; }
+@media (prefers-reduced-motion: reduce) { .mk-bar span i { transition: none; } }
+
+/* This wallet's orders on their way */
+.mk-strip { display: flex; flex-direction: column; gap: 2px; margin: -8px 0 30px; padding: 6px 20px; border-radius: 16px; background: var(--ground-dark); color: #e9ecef; }
+.mk-strip-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 18px; align-items: center; padding: 12px 0; border-top: 1px solid rgba(238, 241, 251, 0.14); }
+.mk-strip-row:first-child { border-top: 0; }
+.mk-strip-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mk-strip-copy strong { font-family: var(--display); font-weight: 600; font-size: 1rem; letter-spacing: -0.015em; }
+.mk-strip-copy span { font-size: 0.86rem; color: #c3cad4; }
+.mk-strip .rc-tx { color: #9fb1ff; }
+.mk-strip .primary { min-height: 44px; padding: 10px 18px; box-shadow: none; }
+.mk-strip-note { padding: 0 0 12px; font-size: 0.84rem; color: #c3cad4; }
+.mk-strip-note.ok { color: #8fe0bf; }
+.mk-strip-note.error { color: #ffb3ba; }
+
+/* Order progress: Sealed, Revealed, Cleared */
+.mk-track { display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.mk-track li { position: relative; padding: 6px 10px 6px 22px; border-radius: 8px; font-size: 0.76rem; font-weight: 700; color: #98a1b0; background: rgba(238, 241, 251, 0.06); white-space: nowrap; }
+.mk-track li::before { content: ""; position: absolute; left: 9px; top: 50%; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%; border: 1.5px solid currentColor; }
+.mk-track li.is-done { color: #dfe2e7; }
+.mk-track li.is-done::before { background: currentColor; }
+.mk-track li.is-now { color: #fff; background: color-mix(in srgb, var(--brand) 55%, transparent); }
+.mk-track li.is-now::before { background: #fff; border-color: #fff; }
+
+/* Order desk */
+.mk-pick label { display: block; font-size: 0.82rem; font-weight: 600; color: #1d2c47; margin-bottom: 6px; }
+.mk-pick select { width: 100%; height: 52px; padding: 0 14px; border: 1px solid var(--hairline); border-radius: 14px; background: var(--paper); color: var(--ink); font-weight: 600; }
+.mk-pick select:focus { outline: 2px solid color-mix(in srgb, var(--brand) 22%, transparent); border-color: var(--brand); }
+.mk-problem { color: var(--danger); font-weight: 600; }
+.mk-tol { display: flex; flex-direction: column; gap: 8px; }
+.mk-tol-line { font-size: 0.86rem; color: #1d2c47; }
+.rc-muted-inline { color: var(--muted); font-family: var(--text); font-weight: 600; font-size: 0.86rem; }
+.mk-check { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; background: var(--paper); cursor: pointer; }
+.mk-check input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--brand); flex: none; }
+.mk-check span { display: flex; flex-direction: column; gap: 2px; font-weight: 700; font-size: 0.92rem; }
+.mk-check small { font-weight: 500; font-size: 0.8rem; color: var(--muted); }
+.mk-check.is-off { cursor: not-allowed; }
+.mk-check.is-off span { color: var(--muted); }
+.mk-reveal { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; border: 0; }
+.mk-reveal legend { padding: 0; margin-bottom: 6px; font-size: 0.82rem; font-weight: 600; color: #1d2c47; }
+.mk-reveal label { display: flex; gap: 12px; align-items: flex-start; min-height: 44px; padding: 10px 14px; border-radius: 14px; background: var(--paper); cursor: pointer; }
+.mk-reveal input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--brand); flex: none; }
+.mk-reveal span { display: flex; flex-direction: column; gap: 2px; font-weight: 700; font-size: 0.92rem; }
+.mk-reveal small { font-weight: 500; font-size: 0.8rem; color: var(--muted); }
+.mk-desk-foot { font-size: 0.84rem; color: var(--muted); line-height: 1.5; }
+.mk-desk-foot a, .mk-tiers a, .mk-more a, .mk-wait a { color: var(--brand); font-weight: 700; }
+.rc-go:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* Side column */
+.rc-side h2 + .mk-steps { margin-top: 14px; }
+.mk-steps { list-style: none; margin: 0 0 26px; padding: 0; counter-reset: step; }
+.mk-steps li { counter-increment: step; display: grid; grid-template-columns: 34px minmax(0, 1fr); column-gap: 10px; padding: 12px 0; border-top: 1px solid var(--hairline); }
+.mk-steps li:first-child { border-top: 0; }
+.mk-steps li::before { content: counter(step); grid-row: span 2; font-family: var(--mono); font-weight: 700; color: var(--brand); font-size: 0.95rem; }
+.mk-steps strong { font-family: var(--display); font-weight: 600; }
+.mk-steps span { color: #1d2c47; font-size: 0.92rem; line-height: 1.5; }
+.mk-facts { margin-top: 20px; }
+.rc-side h2 + .mk-facts { margin-top: 8px; }
+.mk-tiers { margin-top: 22px; }
+.mk-tiers h3 { font-size: 1.05rem; }
+.mk-tiers ul { list-style: none; margin: 10px 0 0; padding: 0; }
+.mk-tiers li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 12px; border-radius: 10px; font-size: 0.9rem; }
+.mk-tiers li span { color: #1d2c47; }
+.mk-tiers li strong { font-family: var(--mono); font-size: 0.86rem; }
+.mk-tiers li.is-yours { background: color-mix(in srgb, var(--brand) 10%, transparent); }
+.mk-tiers li.is-yours strong { color: var(--brand); }
+.mk-more { margin-top: 20px; font-size: 0.92rem; color: #1d2c47; }
+.mk-wait { margin-top: 8px; }
+
+/* Revealed book and batches */
+.mk-result { max-width: 560px; margin-bottom: 18px; }
+.mk-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 8px; }
+.mk-sides h3 { font-size: 1.1rem; }
+.mk-sides > div:first-child h3 { color: var(--success); }
+.mk-sides > div:last-child h3 { color: var(--danger); }
+.mk-link { min-height: 32px; padding: 0; border: 0; background: transparent; font-family: var(--mono); font-weight: 700; color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
+.mk-link[aria-pressed="true"] { color: var(--ink); text-decoration: none; }
+.mk-sub { display: block; font-size: 0.74rem; color: var(--muted); font-family: var(--text); }
+.rc-table tr.is-picked td { background: color-mix(in srgb, var(--brand) 5%, transparent); }
+
+/* Stock list */
+.mk-stocks { padding-top: 12px; }
+.mk-stock { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; }
+.mk-stock span { display: flex; flex-direction: column; }
+.mk-stock strong { font-family: var(--display); font-weight: 600; letter-spacing: -0.015em; }
+.mk-stock small { font-family: var(--mono); font-size: 0.76rem; color: var(--muted); }
+.mk-stock:hover strong { color: var(--brand); }
+.mk-trade { min-height: 40px; padding: 8px 16px; }
+.mk-card-stock { display: inline-flex; align-items: center; gap: 10px; font-family: var(--display); font-size: 1.02rem; color: var(--ink); letter-spacing: -0.02em; }
+
+/* Burn sources added by the markets */
+.rc-sources li:nth-child(5) .rc-bar i { background: #3e9b84; }
+.rc-sources li:nth-child(6) .rc-bar i { background: #c48a3a; }
+
+@media (max-width: 1000px) {
+  .mk-sides { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  .mk-strip { padding: 4px 16px; margin: -4px 0 22px; }
+  .mk-strip-row { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .mk-strip .primary { width: 100%; }
+  .mk-track li { padding: 5px 8px 5px 20px; font-size: 0.75rem; }
+  .mk-clock-foot { flex-direction: column; gap: 2px; }
+  .mk-clock-foot span:last-child { text-align: left; }
+  .mk-stocks .rc-table tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; }
+  .mk-stocks .rc-table td { grid-column: 1; }
+  .mk-stocks .rc-table td:last-child { grid-column: 2; grid-row: 1 / span 5; align-self: center; }
+  .mk-stocks .rc-table td[data-label]:not([data-label=""]):not([data-label="Stock"])::before,
+  .mk-orders td[data-label]::before, .mk-batches td[data-label]::before, .mk-side-table td[data-label]::before { display: inline-block; min-width: 96px; font-family: var(--text); font-size: 0.8rem; color: var(--muted); }
+  .mk-stocks .rc-table td[data-label]:not([data-label=""]):not([data-label="Stock"])::before, .mk-orders td[data-label]::before, .mk-batches td[data-label]::before, .mk-side-table td[data-label]::before { content: attr(data-label); }
+  .mk-orders td:empty, .mk-batches td:empty, .mk-stocks td:empty { display: none; }
+}
