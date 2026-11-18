@@ -24,7 +24,7 @@ export const CONSOLE_SECTIONS: ConsoleSection[] = [
   { href: `${DASHBOARD_HREF}/agents`, label: "Agents", icon: "agents", lead: "Set each agent's orbit: the caps and targets it pays within.", core: true },
   { href: `${DASHBOARD_HREF}/merchant`, label: "Merchant", icon: "merchant", lead: "The address where agents pay you over x402.", features: ["facilitator"] },
   { href: `${DASHBOARD_HREF}/positions`, label: "Positions", icon: "positions", lead: "Stake, Earn shares and whatever is claimable.", features: ["stake", "earn"] },
-  { href: `${DASHBOARD_HREF}/orders`, label: "Orders", icon: "orders", lead: "Sealed orders across Stocks, Private Swap and Dark Pool.", features: ["stocks", "swap", "darkpool"] },
+  { href: `${DASHBOARD_HREF}/orders`, label: "Orders", icon: "orders", lead: "Sealed orders across Stocks, Eclipse and Quiet Book.", features: ["stocks", "swap", "darkpool"] },
 ];
 
 /** The section a path belongs to: the deepest match, the overview otherwise. */

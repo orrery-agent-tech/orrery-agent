@@ -8,6 +8,9 @@ const config: NextConfig = {
     return [
       { source: "/operator", destination: "/dashboard/agents", permanent: false },
       { source: "/credits", destination: "/dashboard/credits", permanent: false },
+      // The market venues were renamed on 2026-11-17: Private Swap is Eclipse, Dark Pool is Quiet Book.
+      { source: "/swap", destination: "/eclipse", permanent: true },
+      { source: "/dark-pool", destination: "/quiet-book", permanent: true },
     ];
   },
 };
