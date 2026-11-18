@@ -1,0 +1,126 @@
+/* Community pages (chat, rewards, templates, referrals, passes) on the ORRY surfaces of orry.css.
+   Same rules: hairline rows for data, one brand action per surface, text buttons for the quiet actions. */
+
+/* Shared bits */
+.cm-link { padding: 0; border: 0; background: transparent; color: var(--brand); font-weight: 700; font-size: 0.86rem; cursor: pointer; }
+.cm-link:hover:not(:disabled) { text-decoration: underline; text-underline-offset: 3px; }
+.cm-link:disabled { opacity: 0.45; cursor: not-allowed; }
+.cm-quiet { color: var(--muted); }
+.cm-label { display: block; font-size: 0.82rem; font-weight: 600; color: #2b2f52; margin-bottom: 6px; }
+.cm-input, .cm-compose textarea, .cm-code { width: 100%; padding: 13px 16px; border: 1px solid var(--hairline); border-radius: 14px; background: var(--paper); color: var(--ink); font-family: var(--text); font-size: 1rem; line-height: 1.5; outline: none; transition: border-color var(--motion-fast), background var(--motion-fast); }
+.cm-input:focus, .cm-compose textarea:focus, .cm-code:focus { border-color: var(--brand); background: #fff; outline: 2px solid color-mix(in srgb, var(--brand) 22%, transparent); }
+.cm-input { height: 52px; }
+.cm-code { font-family: var(--mono); font-size: 0.86rem; resize: vertical; }
+.cm-field-foot { margin-top: 6px; font-size: 0.8rem; color: var(--muted); overflow-wrap: anywhere; }
+.cm-state { font-size: 0.86rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.cm-sub { display: flex; flex-wrap: wrap; gap: 2px 12px; margin-top: 3px; font-size: 0.78rem; color: var(--muted); }
+.cm-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.cm-desk-title { font-size: clamp(1.4rem, 2vw, 1.75rem); }
+.cm-after { margin-top: 36px; }
+.cm-hash { margin-top: 14px; font-size: 0.74rem; color: var(--muted); overflow-wrap: anywhere; }
+.cm-rules { font-size: 0.86rem; color: var(--muted); }
+.cm-rules summary { cursor: pointer; }
+.cm-rules pre { margin: 0.5rem 0 0; font-size: 0.78rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cm-boosted { font-size: 0.74rem; font-weight: 700; color: var(--brand); white-space: nowrap; }
+
+/* Chat: rooms on the left, the room's feed on the right */
+.cm-chat { display: grid; grid-template-columns: minmax(0, 250px) minmax(0, 1fr); gap: clamp(24px, 3vw, 44px); align-items: start; }
+.cm-rooms { position: sticky; top: 24px; padding-top: 6px; }
+.cm-rooms h2 { font-size: 1.2rem; margin-bottom: 8px; }
+.cm-rooms ul { list-style: none; margin: 0; padding: 0; }
+.cm-rooms li { border-top: 1px solid #e3e8ee; }
+.cm-rooms li:first-child { border-top: 0; }
+.cm-rooms button { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; min-height: 56px; padding: 10px 0 10px 14px; border: 0; background: transparent; text-align: left; color: var(--muted); cursor: pointer; }
+.cm-rooms button strong { font-family: var(--display); font-weight: 600; font-size: 1rem; letter-spacing: -0.015em; color: var(--ink); }
+.cm-rooms button span { font-size: 0.78rem; }
+.cm-rooms button::before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 2px; border-radius: 2px; background: transparent; transition: background var(--motion-fast); }
+.cm-rooms button[aria-pressed="true"]::before { background: var(--brand); }
+.cm-rooms button:hover strong { color: var(--brand); }
+
+.cm-feed { min-width: 0; }
+.cm-compose { padding-top: 22px; display: flex; flex-direction: column; gap: 10px; }
+.cm-compose textarea { min-height: 96px; resize: vertical; }
+.cm-compose textarea:disabled { opacity: 0.6; cursor: not-allowed; }
+.cm-compose .rc-go { margin-top: 4px; }
+.cm-compose-foot { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px 16px; font-size: 0.8rem; color: var(--muted); }
+.cm-bytes { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.cm-bytes.is-over { color: var(--danger); font-weight: 700; }
+.cm-fee strong { font-family: var(--mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+.cm-replying { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 14px; border-radius: 12px; background: var(--paper); font-size: 0.86rem; color: #2b2f52; }
+.cm-replying span { min-width: 0; overflow-wrap: anywhere; }
+
+.cm-msgs { margin-top: 28px; }
+.cm-msgs ol { list-style: none; margin: 0; padding: 0; }
+.cm-msg { padding: 18px 0 16px; border-top: 1px solid #e3e8ee; }
+.cm-msg:first-child { border-top: 0; }
+.cm-msg.is-boosted { padding-left: 16px; box-shadow: inset 2px 0 0 var(--brand); }
+.cm-msg-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.cm-msg-head strong { font-family: var(--display); font-weight: 600; font-size: 0.98rem; letter-spacing: -0.015em; overflow-wrap: anywhere; }
+.cm-msg-head .rc-tx { margin-left: auto; }
+.cm-you { font-size: 0.74rem; font-weight: 700; color: var(--brand); }
+.cm-time { font-size: 0.8rem; color: var(--muted); }
+.cm-quote { margin-top: 6px; padding-left: 10px; border-left: 2px solid #d8d4ea; font-size: 0.84rem; color: var(--muted); overflow-wrap: anywhere; }
+.cm-text { margin-top: 6px; font-size: 1rem; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cm-hidden { margin-top: 6px; font-size: 0.9rem; color: var(--muted); }
+.cm-tips { margin-top: 6px; font-family: var(--mono); font-size: 0.8rem; color: var(--success); }
+.cm-actions { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 10px; }
+.cm-tip { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px 16px; margin-top: 14px; padding: 16px; border-radius: 16px; background: var(--paper); }
+.cm-tip .rc-amount { flex: 1 1 260px; min-width: 0; }
+.cm-tip .rc-amount-box { background: #fff; }
+.cm-tip .primary { margin-top: 23px; }
+.cm-more { margin-top: 18px; }
+.cm-empty { margin-top: 28px; }
+
+/* Rewards: events and achievements as hairline rows inside their panels */
+.cm-events, .cm-achievements { list-style: none; margin: 8px 0 0; padding: 0; }
+.cm-event, .cm-achievement { padding: 18px 0; border-top: 1px solid #e3e8ee; }
+.cm-event:first-child, .cm-achievement:first-child { border-top: 0; }
+.cm-event-main { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; }
+.cm-event-main > div:first-child { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.cm-event-main strong { font-family: var(--display); font-weight: 600; font-size: 1.08rem; letter-spacing: -0.015em; }
+.cm-event-main > div:first-child span { font-size: 0.88rem; color: #2b2f52; }
+.cm-amount { font-family: var(--mono); font-weight: 700; font-size: 1.05rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cm-reward { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.cm-reward small { font-size: 0.74rem; color: var(--muted); }
+.cm-winners { list-style: none; margin: 12px 0 0; padding: 0; }
+.cm-winners li { display: grid; grid-template-columns: minmax(0, 1fr) auto 48px; gap: 12px; padding: 6px 0; font-size: 0.86rem; border-top: 1px solid #eef1f5; }
+.cm-winners li span:last-child { color: var(--success); font-weight: 700; font-size: 0.78rem; text-align: right; }
+.cm-claim { margin-top: 14px; }
+.cm-achievement-foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px 18px; margin-top: 12px; }
+.cm-claim-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; }
+.cm-claim-row .rc-inline .cm-label { margin: 0; }
+.cm-claim-row .rc-inline input { width: 120px; }
+.cm-recipients { margin-top: 12px; }
+
+/* Templates */
+.cm-templates td { vertical-align: top; }
+.cm-tpl-name { display: inline-block; margin-right: 10px; font-family: var(--display); font-weight: 600; letter-spacing: -0.015em; }
+.cm-templates .num .cm-sub { justify-content: flex-end; }
+.cm-templates .rc-notice { text-align: left; white-space: normal; }
+.cm-mine { list-style: none; margin: 12px 0 0; padding: 0; }
+
+/* Referrals */
+.cm-reflink { margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: var(--paper); font-size: 0.82rem; overflow-wrap: anywhere; }
+.cm-offer { margin: 0 0 32px; }
+.cm-offer-text { margin-top: 4px; color: #ecebf7; font-size: 0.95rem; }
+.cm-offer .rc-notice { margin-top: 10px; }
+
+/* Passes */
+.cm-gift { margin-top: 14px; }
+
+@media (max-width: 1000px) {
+  .cm-chat { grid-template-columns: minmax(0, 1fr); }
+  .cm-rooms { position: static; }
+  .cm-rooms ul { display: flex; gap: 6px 22px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid #e3e8ee; }
+  .cm-rooms ul::-webkit-scrollbar { display: none; }
+  .cm-rooms li { border-top: 0; flex: none; }
+  .cm-rooms button { padding-left: 0; }
+  .cm-rooms button::before { top: auto; bottom: 0; left: 0; right: 0; width: auto; height: 2px; }
+}
+@media (max-width: 760px) {
+  .cm-event-main { flex-direction: column; gap: 8px; }
+  .cm-reward { align-items: flex-start; }
+  .cm-templates .num .cm-sub { justify-content: flex-start; }
+  .cm-msg-head .rc-tx { margin-left: 0; }
+  .cm-tip .primary { margin-top: 0; width: 100%; }
+}
