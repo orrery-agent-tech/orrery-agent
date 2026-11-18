@@ -154,6 +154,37 @@ export const templateMarketAbi = parseAbi([
   "event TemplateBought(uint256 indexed id, address indexed buyer, address indexed creator, uint256 paid, uint256 burned)",
 ]);
 
+/** `TemplateMarketUsdg` (`docs/updates/TEMPLATES-USDG-SPEC.md`): the listing surface of `TemplateMarket`, sales in USDG. */
+export const templateMarketUsdgAbi = parseAbi([
+  "function usdg() view returns (address)",
+  "function treasury() view returns (address)",
+  "function feeBps() view returns (uint16)",
+  "function minPriceUsd() view returns (uint256)",
+  "function maxPriceUsd() view returns (uint256)",
+  "function templateCount() view returns (uint256)",
+  "function licensed(uint256 id, address buyer) view returns (bool)",
+  "function quote(uint256 id) view returns (uint256)",
+  "function split(uint256 price) view returns (uint256 fee, uint256 toCreator)",
+  "function list(uint256 priceUsd, bytes32 contentHash, string uri) returns (uint256)",
+  "function setPrice(uint256 id, uint256 priceUsd)",
+  "function setListed(uint256 id, bool listed)",
+  "function buy(uint256 id, uint256 maxPay) returns (uint256)",
+  "event TemplateListed(uint256 indexed id, address indexed creator, uint256 priceUsd, bytes32 contentHash, string uri)",
+  "event TemplatePriced(uint256 indexed id, uint256 priceUsd)",
+  "event TemplateListing(uint256 indexed id, bool listed)",
+  "event TemplateSold(uint256 indexed id, address indexed buyer, address indexed creator, uint256 price, uint256 fee)",
+  "error BadPrice()",
+  "error EmptyHash()",
+  "error BadUri()",
+  "error UnknownTemplate()",
+  "error NotCreator()",
+  "error NotListed()",
+  "error AlreadyLicensed()",
+  "error OwnTemplate()",
+  "error PriceAboveMax(uint256 price, uint256 maxPay)",
+  "error InexactTransfer()",
+]);
+
 export const referralRegistryAbi = parseAbi([
   "function referrerOf(address referee) view returns (address)",
   "function linkedAt(address referee) view returns (uint64)",

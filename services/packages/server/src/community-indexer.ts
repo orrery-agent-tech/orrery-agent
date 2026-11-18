@@ -10,6 +10,7 @@ import {
   referralRegistryAbi,
   rewardPoolAbi,
   templateMarketAbi,
+  templateMarketUsdgAbi,
 } from "@orrery/shared";
 import type { Chain } from "./chain.js";
 import type { Config } from "./config.js";
@@ -36,7 +37,8 @@ const ABIS: Record<Source, Abi> = {
   names: orryNamesAbi as Abi,
   boost: orryBoostAbi as Abi,
   passes: orryPassesAbi as Abi,
-  templates: templateMarketAbi as Abi,
+  // one `templates` address: the ORRY `TemplateMarket` or `TemplateMarketUsdg` (same listing events, its own sale event)
+  templates: [...templateMarketAbi, ...templateMarketUsdgAbi.filter((x) => x.type === "event" && x.name === "TemplateSold")] as Abi,
   referrals: referralRegistryAbi as Abi,
   cashback: cashbackRewardsAbi as Abi,
   attestor: attestorAbi as Abi,
@@ -66,6 +68,12 @@ export interface CommunityPrices {
   boostUsd: Record<number, bigint>;
   passUsd: Record<number, bigint>;
   templateBurnBps: bigint;
+  /** What the template market charges: USDG (`TemplateMarketUsdg`), ORRY (`TemplateMarket`), or null with no market. */
+  templatePayment: "usdg" | "orry" | null;
+  /** `TemplateMarketUsdg.feeBps` (the treasury's share of a sale); 0 for the ORRY market. */
+  templateFeeBps: bigint;
+  /** The token a template sale moves (the USDG market's `usdg()`); null for the ORRY market or none. */
+  templateAsset: Address | null;
 }
 
 let pricesCache: { key: string; prices: CommunityPrices } | null = null;
@@ -75,7 +83,10 @@ export async function communityPrices(c: CommunityConfig, chain: Chain): Promise
   if (pricesCache?.key === key) return pricesCache.prices;
   const read = async <T>(address: Address | null, abi: Abi, functionName: string, args: unknown[] = []): Promise<T | null> =>
     address ? ((await chain.public.readContract({ address, abi, functionName, args })) as T) : null;
-  const [post, name, bPost, bAgent, bTemplate, day, week, burnBps] = await Promise.all([
+  // `usdg()` answers only on the USDG market; the ORRY market has `burnBps` instead
+  const templateAsset = c.templates ? await read<Address>(c.templates, templateMarketUsdgAbi as Abi, "usdg").catch(() => null) : null;
+  const usdgMarket = templateAsset !== null;
+  const [post, name, bPost, bAgent, bTemplate, day, week, burnBps, feeBps] = await Promise.all([
     read<bigint>(c.chat, orryChatAbi as Abi, "postFeeUsd"),
     read<bigint>(c.names, orryNamesAbi as Abi, "nameFeeUsd"),
     read<bigint>(c.boost, orryBoostAbi as Abi, "usdPerDay", [1]),
@@ -83,7 +94,8 @@ export async function communityPrices(c: CommunityConfig, chain: Chain): Promise
     read<bigint>(c.boost, orryBoostAbi as Abi, "usdPerDay", [3]),
     read<bigint>(c.passes, orryPassesAbi as Abi, "dayPassUsd"),
     read<bigint>(c.passes, orryPassesAbi as Abi, "weekPassUsd"),
-    read<number>(c.templates, templateMarketAbi as Abi, "burnBps"),
+    usdgMarket ? null : read<number>(c.templates, templateMarketAbi as Abi, "burnBps"),
+    usdgMarket ? read<number>(c.templates, templateMarketUsdgAbi as Abi, "feeBps") : null,
   ]);
   const prices: CommunityPrices = {
     postFeeUsd: post ?? 0n,
@@ -91,6 +103,9 @@ export async function communityPrices(c: CommunityConfig, chain: Chain): Promise
     boostUsd: { 1: bPost ?? 0n, 2: bAgent ?? 0n, 3: bTemplate ?? 0n },
     passUsd: { 1: day ?? 0n, 2: week ?? 0n },
     templateBurnBps: BigInt(burnBps ?? 0),
+    templatePayment: !c.templates ? null : usdgMarket ? "usdg" : "orry",
+    templateFeeBps: BigInt(feeBps ?? 0),
+    templateAsset,
   };
   pricesCache = { key, prices };
   return prices;
@@ -214,6 +229,14 @@ async function apply(tx: Tx, source: Source, event: string, a: Args, log: Log, t
       // the protocol's part of a sale is the burned share; the rest is the creator's income
       const usd = t ? (BigInt(t.price_usd) * prices.templateBurnBps) / 10_000n : 0n;
       await fee(tx, log, s(a.buyer), "templates", usd, BigInt(s(a.burned)), time);
+      break;
+    }
+    case "templates.TemplateSold": {
+      // a USDG sale: the fee is the protocol's part in USD exactly, the rest went to the creator; no ORRY moved
+      await tx`insert into community_licences (id, buyer, paid, block_time) values (${Number(a.id)}, ${s(a.buyer)}, ${s(a.price)}, ${time})
+        on conflict (id, buyer) do nothing`;
+      await tx`update community_templates set sales = sales + 1 where id = ${Number(a.id)}`;
+      await fee(tx, log, s(a.buyer), "templates", BigInt(s(a.fee)), 0n, time);
       break;
     }
     // ---------------------------------------------------------------- referrals and the cashback sink
